@@ -22,18 +22,18 @@ const [validation, setValidation] = useState("");
 {/* try-catch로 수정했는데 맞는지 불확실: 이미 존재하는 이메일인지 체크해야함-- 아님 login()이랑 합쳐야할듯? */}
   const handleUserInfoChange = async () => {
     try {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      const existingEmail = querySnapshot.docs.some(doc => doc.data().email === email);
-      if (existingEmail) {
-        setValidation('이미 존재하는 이메일입니다.');
-        return;
-      }
-      await authService.createUserWithEmailAndPassword(email, password);
-      await addDoc(collection(db, 'users'), { email, password });
+      const { user } = await authService.createUserWithEmailAndPassword(email, password);
+      const userRef = collection(db, 'users');
+      const newUserDoc = doc(userRef, user.uid);
+      await addDoc(newUserDoc, { user_email: email, user_password: password, user_id: user.uid });
       setValidation('회원가입에 성공했습니다.');
-    } catch (error) {
+      } catch (error) {
       console.error('회원가입 오류:', error);
+      if (error.code === 'auth/email-already-in-use'){
+        setValidation('이미 존재하는 이메일입니다.');
+      } else {
       setValidation('회원가입 중 오류가 발생했습니다.');
+      }
     }
   };
 
