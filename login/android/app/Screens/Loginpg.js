@@ -5,8 +5,8 @@ import {
   Image,
   View,
   TouchableOpacity,
-  TextInput,
   StyleSheet, 
+  TextInput,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,7 +19,10 @@ function Loginpg({ navigation }) {
 const [password, setPassword] = useState('');
 const [email, setEmail] = useState('');
 const [validation, setValidation] = useState("");
+{/* 로그인 정보 저장 async storage */}
+const [rememberMe, setRememberMe] = useState(false);
 
+  
 const handlePasswordChange = (value) => {
     setPassword(value);
   };
@@ -27,12 +30,7 @@ const handlePasswordChange = (value) => {
     setEmail(val);
   };
 
-
-{/* 로그인 정보 저장 async storage */}
-  const [rememberMe, setRememberMe] = useState(false);
-
   useEffect(() => {
-    // Load stored email and password when the component mounts
     loadLoginInfo();
   }, []);
 
@@ -100,14 +98,14 @@ const onSubmit = async (event) => {
         val={email}
         onChangeText={handleEmailChange}
         placeholder="이메일"
-        keyboardType="email"
+        keyboardType="email-address"
       />
       <TextInput
         style={styles.input}
         value={password}
         onChangeText={handlePasswordChange}
         placeholder="비밀번호"
-        keyboardType="email"
+        keyboardType="email-address"
       />
 
         {/* 비밀번호나 이메일 안맞았을떄-- 버튼누르고 체크후 띄울수 있게 어떻게하지 */}
