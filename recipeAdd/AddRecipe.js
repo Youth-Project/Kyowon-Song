@@ -149,7 +149,7 @@ const AddA = ({navigation}) => {
     width: 140,
     borderRadius: 25,
     marginBottom: 20, }}
-        onPress={() => navigation.back()}>
+        onPress={() => navigation.goBack()}>
  
         <Text style={{
         color: '#CCCCCC', 
