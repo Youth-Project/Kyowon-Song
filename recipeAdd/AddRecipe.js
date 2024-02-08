@@ -62,7 +62,7 @@ const AddA = ({navigation}) => {
         style={{top: 83,
     marginBottom: 20, 
     paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139,}}
-        onPress={() => navigation.navigate('Back')}>
+{/* onPress={사진추가 갤러리} */} >
       <Text style={{top: 60,
     fontSize: 12,
     color: '#9C9C9C',
@@ -94,7 +94,7 @@ const AddA = ({navigation}) => {
     width: 215,
     height: 330,
     borderRadius: 10, }}
-        onPress={() => navigation.navigate('Recipe')}>
+        onPress={() => navigation.navigate('Ingredients')}>
         <Text style={{
           top: 150,
           color: '#9C9C9C', 
@@ -129,7 +129,7 @@ const AddA = ({navigation}) => {
     width: 112,
     height: 166,
     borderRadius: 10, }}
-        onPress={() => navigation.navigate('Recipe')}>
+{/* onPress={switch 별컴포넌트} */} >
         <Text style={{
           top: 5,
           color: '#000000', 
@@ -162,7 +162,7 @@ const AddA = ({navigation}) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonUnfill}
-        onPress={() => navigation.navigate('Ingredients')}>
+        onPress={() => navigation.navigate('RecipeTab')}>
         <Text style={styles.buttonColorText}>다음</Text>
       </TouchableOpacity>
   </View>
