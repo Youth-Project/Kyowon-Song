@@ -90,7 +90,7 @@ function RecipeTab({navigation}) {
         <TouchableOpacity
           style={styles.button}
 {/*onPress={네비게이션 화면 못찾음}*/}
-          onPress={() => navigation.navigate('Login')}>
+          onPress={() => navigation.navigate('Recom')}>
           <Text style={styles.buttonText}>레시피 등록</Text>
         </TouchableOpacity>
         </View>
