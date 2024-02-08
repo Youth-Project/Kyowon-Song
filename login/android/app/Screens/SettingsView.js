@@ -86,10 +86,10 @@ const SettingsView = ({navigation}) => {
             <View style={Styles.ModalOpen}>
               <LogoutModal/>
               <View style={Styles.ModalBTN}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleLogout}>
                   <YesBTN/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleLogout}>
+                <TouchableOpacity>
                   <NoBTN/>
                 </TouchableOpacity>
               </View>
@@ -107,10 +107,10 @@ const SettingsView = ({navigation}) => {
             <View style={Styles.ModalOpen}>
              <WithdrawModal/>
              <View style={Styles.ModalBTN}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={deleteUser}>
                   <YesBTN/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={deleteUser}>
+                <TouchableOpacity>
                   <NoBTN/>
                 </TouchableOpacity>
               </View>
