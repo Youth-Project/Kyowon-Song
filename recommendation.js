@@ -41,7 +41,7 @@ const Post = props => {
 
 
 {/* 레시피 추천화면 출력용 */}
-const Cafe = () => {
+const Recom = () => {
   const [cookOrderIndex, setCookOrderIndex] = useState(0);
   const cookOrder = [
     require('./assets/defaultOrder.svg'),
@@ -146,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Cafe;
+export default Recom;
