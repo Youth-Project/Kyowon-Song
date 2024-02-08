@@ -5,6 +5,7 @@ import WithdrawModal from "../assets/icons/WithdrawModal.svg";
 import LogoutModal from "../assets/icons/LogoutModal.svg";
 import YesBTN from "../assets/icons/YesBTN.svg";
 import NoBTN from "../assets/icons/NoBTN.svg";
+import { handleLogout, deleteUser } from './dbFunctions';
 
 const SettingsView = ({navigation}) => {
   const [logoutVisible, setLogoutVisible]=useState(false);
@@ -12,12 +13,10 @@ const SettingsView = ({navigation}) => {
 
   const logoutModal = () => {
     setLogoutVisible(!logoutVisible);
-    
   };
 
   const withdrawVisModal = () => {
     setWithdrawVisible(!withdrawVisible);
-    await deleteUser();
   };
 
   return (
@@ -90,7 +89,7 @@ const SettingsView = ({navigation}) => {
                 <TouchableOpacity>
                   <YesBTN/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={logoutModal}>
+                <TouchableOpacity onPress={handleLogout}>
                   <NoBTN/>
                 </TouchableOpacity>
               </View>
@@ -111,7 +110,7 @@ const SettingsView = ({navigation}) => {
                 <TouchableOpacity>
                   <YesBTN/>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={withdrawVisModal}>
+                <TouchableOpacity onPress={deleteUser}>
                   <NoBTN/>
                 </TouchableOpacity>
               </View>
