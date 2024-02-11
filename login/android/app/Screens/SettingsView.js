@@ -1,11 +1,15 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Button, View, StyleSheet, Text, Dimensions,TouchableOpacity, Modal } from "react-native";
-import SettingModifyIcon from "../assets/icons/SettingModifyIcon.svg";
+
 import WithdrawModal from "../assets/icons/WithdrawModal.svg";
 import LogoutModal from "../assets/icons/LogoutModal.svg";
 import YesBTN from "../assets/icons/YesBTN.svg";
 import NoBTN from "../assets/icons/NoBTN.svg";
 import { handleLogout, deleteUser } from './dbFunctions';
+
+{/* budget불러오는 함수 ? */}
+const budget=300000;
+const formattedBudget = budget?.toLocaleString('en-US'); // 세 자릿수마다 쉼표 추가
 
 const SettingsView = ({navigation}) => {
   const [logoutVisible, setLogoutVisible]=useState(false);
@@ -19,6 +23,34 @@ const SettingsView = ({navigation}) => {
     setWithdrawVisible(!withdrawVisible);
   };
 
+  {/* 수정버튼제한 */}
+  const [isButtonDisabled, setButtonDisabled] = useState(false);
+
+  useEffect(() => {
+    checkAndDisableButton();
+  }, []);
+
+  const checkAndDisableButton = async () => {
+    // 현재 날짜 정보 가져오기
+    const currentDate = new Date();
+
+    // AsyncStorage에서 저장된 마지막 버튼 클릭 날짜 가져오기
+    const lastButtonPressDate = await AsyncStorage.getItem('lastButtonPressDate');
+
+    if (lastButtonPressDate) {
+      // 저장된 날짜가 있으면 마지막 버튼 클릭 날짜의 월과 현재 날짜의 월을 비교하여 버튼 활성화 여부 설정
+      const lastDate = new Date(lastButtonPressDate);
+      setButtonDisabled(lastDate.getMonth() === currentDate.getMonth());
+    }
+  };
+
+  const handleButtonClick = async () => {
+    
+    setButtonDisabled(true);
+    await AsyncStorage.setItem('lastButtonPressDate', new Date().toISOString());
+  navigation.navigate('MonthlyModifyView');
+  };
+
   return (
     <View style={Styles.container}>
       <Text style={Styles.Texts}>
@@ -27,11 +59,12 @@ const SettingsView = ({navigation}) => {
 
       <View style={Styles.MonthlyContainer}>
         <View style={Styles.MonthlyPlan}>
-          <Text style={Styles.MonthlyText}>300,000 원</Text>
-            <View style={{flexDirection:'row', gap:120, marginTop:15}}>
+          <Text style={Styles.MonthlyText}>{formattedBudget ? `${formattedBudget}원` : '0원'}</Text>
+            <View style={{flexDirection:'row', marginTop:15, gap: 70}}>
               <Text style={{fontSize:10, marginLeft:20, marginTop:10}}>이번 달 예산을 설정해주세요!</Text>
-              <TouchableOpacity onPress={()=>navigation.navigate('MonthlyModifyView')}>
-                <SettingModifyIcon/>
+              <TouchableOpacity style={{width:54, height: 22, borderWidth: 1, borderColor: isButtonDisabled ? '#ccc' : '#FEA655', backgroundColor: 'white', borderRadius: 3, top: 4, }} onPress={handleButtonClick} disabled={isButtonDisabled}
+              >
+                <Text style={{textAlign: 'center', paddingTop: 2, fontSize: 12, color: isButtonDisabled ? '#ccc': '#FEA655'}}>수정</Text>
               </TouchableOpacity>
             </View>
         </View>
