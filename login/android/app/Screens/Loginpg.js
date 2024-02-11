@@ -85,6 +85,7 @@ const onSubmit = async (event) => {
       }
       {/* 로그인 */}
         await authService.signInWithEmailAndPassword(email, password);
+        navigation.navigate('SuccessLogin');
     } catch (error) {
       setValidation('일치하는 이메일 혹은 비밀번호가 없습니다.', error);
     }
@@ -131,7 +132,7 @@ const onSubmit = async (event) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.reset}
-        onPress={() => navigation.ForgotPW()}>
+        onPress={() => navigation.navigate('ForgotPW')}>
         <Text style={styles.saveTxt}>비밀번호 재설정</Text>
       </TouchableOpacity>
     </View>
