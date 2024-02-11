@@ -1,6 +1,13 @@
+{/* 부족한 부분: 항목이 채워진 조건하에 버튼이 채워지게, 조리시간 & 별컴 db연결, 요리이름 인풋창 한쪽으로만 늘어나게하기, 사진추가 누르면 갤러리연동 */}
+import React, { useState } from 'react';
+import { Text, View, TouchableOpacity, TextInput, StyleSheet, Modal, Image } from 'react-native';
+
 const AddRecipeMain = ({navigation}) => {
-  const [text, onChangeText] = useState('');
-  const [min, setMin] = useState('');
+  const [food, onChangeFood] = useState('');
+  const [hours, setHours] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [cookingTime, setCookingTime] = useState('');
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleMinChange = (value) => {
@@ -36,6 +43,21 @@ const AddRecipeMain = ({navigation}) => {
     } 
   };
 
+{/* 조리시간 업뎃 */}
+  const updateCookingTime = () => {
+  const hasHour = hours && hours !== '0';
+  const hasMinute = minutes && minutes !== '0';
+
+  if (hasHour || hasMinute) {
+    const newCookingTime = `${hasHour ? hours + '시간' : ''} ${hasMinute ? minutes + '분' : ''}`;
+    setCookingTime(newCookingTime);
+  } else {
+    setCookingTime('조리시간');
+  }
+
+  setModalVisible(false);
+};
+
 
   return (
     <View style={styles.container}>
@@ -66,11 +88,11 @@ const AddRecipeMain = ({navigation}) => {
             borderLeftWidth: 0,
             borderRightWidth:0,
             marginLeft: 5}}
-            setMin={setMin}
-            value={min}
-            onChange={handleMinChange}
             placeholder="0" 
             keyboardType="numeric"
+
+value={hours}
+            onChangeText={(text) => setHours(text)}
             />
           <Text style={{ right: 16,fontSize: 15,top: 12,}}>시</Text>
 
@@ -87,18 +109,20 @@ const AddRecipeMain = ({navigation}) => {
             borderLeftWidth: 0,
             borderRightWidth:0,
             marginLeft: 5}}
-            setMin={setMin}
-            value={min}
-            onChange={handleMinChange}
             placeholder="0" 
-            keyboardType="numeric"
+            keyboardType="numeric" 
+            
+value={minutes}
+
+onChangeText={(text) => setMinutes(text)}
             />
-          <Text style={{ left: 20,fontSize: 15,top: 12,}}>분</Text>
+          <Text style={{ left: 20,fontSize: 15,top: 12,}} >분</Text>
           </View>
             
       <TouchableOpacity
         style={styles.modButton}
-        onPress={() => setModalVisible(!modalVisible)}>
+        onPress={updateCookingTime}
+>
         <Text style={styles.modButtonText}>완료</Text>
       </TouchableOpacity>
               
@@ -131,8 +155,8 @@ const AddRecipeMain = ({navigation}) => {
         paddingLeft: 6, paddingRight: 6, paddingTop: 7, paddingBottom: 7, 
         marginBottom: 17, textDecorationLine: 'underline', textDecorationColor: '#FEA655', 
           }}
-        onChangeText={onChangeText}
-        value={text}
+        onChangeText={onChangeFood}
+        value={food}
         placeholder="요리이름"
       />
       
@@ -167,8 +191,7 @@ const AddRecipeMain = ({navigation}) => {
         fontSize: 18, 
         textAlign: 'center',
         
-        }}>
-        조리시간</Text>
+        }}> {cookingTime || '조리시간'} </Text>
       </TouchableOpacity>
 
       <View
@@ -218,7 +241,7 @@ const AddRecipeMain = ({navigation}) => {
     width: 140,
     borderRadius: 25,
     marginBottom: 20, }}
-        onPress={() => navigation.back()}>
+        onPress={() => navigation.goBack()}>
  
         <Text style={{
         color: '#CCCCCC', 
@@ -231,7 +254,7 @@ const AddRecipeMain = ({navigation}) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonUnfill}
-        onPress={() => navigation.navigate('Login')}>
+        onPress={() => navigation.navigate('Ingredients')}>
         <Text style={styles.buttonColorText}>다음</Text>
       </TouchableOpacity>
   </View>
@@ -314,3 +337,5 @@ const styles = StyleSheet.create({
 
 
 });
+
+export default AddRecipeMain;
