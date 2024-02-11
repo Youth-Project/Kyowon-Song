@@ -60,7 +60,7 @@ const SettingsView = ({navigation}) => {
       <View style={Styles.MonthlyContainer}>
         <View style={Styles.MonthlyPlan}>
           <Text style={Styles.MonthlyText}>{formattedBudget ? `${formattedBudget}원` : '0원'}</Text>
-            <View style={{flexDirection:'row', marginTop:15, gap: 70}}>
+            <View style={{flexDirection:'row', marginTop:15, gap: 120}}>
               <Text style={{fontSize:10, marginLeft:20, marginTop:10}}>이번 달 예산을 설정해주세요!</Text>
               <TouchableOpacity style={{width:54, height: 22, borderWidth: 1, borderColor: isButtonDisabled ? '#ccc' : '#FEA655', backgroundColor: 'white', borderRadius: 3, top: 4, }} onPress={handleButtonClick} disabled={isButtonDisabled}
               >
