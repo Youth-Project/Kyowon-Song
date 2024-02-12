@@ -61,7 +61,34 @@ const handlePasswordChange = (value) => {
   };
 
 
+{/* eye 버튼 */}
+const [eye, setEye] = useState({
+    eye: false,
+    eyeOn: false,
+  });
+  const [isSecure, setIsSecure] = useState(true);
 
+  const handleEyeClick = (buttonName) => {
+    setEye((prevStates) => ({
+      ...prevStates,
+      [buttonName]: !prevStates[buttonName],
+    }));
+    setIsSecure((prevIsSecure) => !prevIsSecure);
+  }; 
+
+  const getImageForEye = (buttonName) => {
+    if (eye[buttonName]) {
+      switch (buttonName) {
+        case 'eyeOpen':
+          return require('./assets/eyeOn.png');
+        default:
+          return require('./assets/eye.png');
+      }
+    } 
+    else{
+      return require('./assets/eye.png');
+    }
+  };
 
 
 {/* const getLogInfo = async () => {
@@ -101,18 +128,25 @@ const onSubmit = async (event) => {
         placeholder="이메일"
         keyboardType="email"
       />
-      <TextInput
+
+
+  <View>
+  <TextInput
         style={styles.input}
         value={password}
         onChangeText={handlePasswordChange}
         placeholder="비밀번호"
         keyboardType="email"
 
-secureTextEntry={true}
+secureTextEntry={isSecure}
       />
+{/* eye버튼 */}
+      <TouchableOpacity style={{ position: 'absolute', right: 60, }} onPress={() => handleEyeClick('eyeOpen')}>
+        <Image style={{left: 50, top: 7 }} source={getImageForEye('eyeOpen')}/>
+    </TouchableOpacity>
+  </View>
 
-        {/* 비밀번호나 이메일 안맞았을떄-- 버튼누르고 체크후 띄울수 있게 어떻게하지 */}
-        <Text style={{bottom: 20, fontSize: 12,
+        <Text style={{bottom: 105, fontSize: 12,
     color: '#ff0000', }}>{validation}</Text>
 
 
@@ -143,6 +177,7 @@ secureTextEntry={true}
   );
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -167,6 +202,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
+    paddingVertical: 0
   },
   save: {
     position: 'absolute',
@@ -247,6 +283,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
+    paddingVertical: 0
   },
   buttonS: {
     top: 183,
@@ -277,6 +314,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
+    paddingVertical: 0
   },
   buttonP: {
     top: 93,
@@ -309,6 +347,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
+    paddingVertical: 0
   },
   smallButton: {
     left: 85,
