@@ -35,7 +35,7 @@ function Budgetpg() {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.back}
-        onPress={() => navigation.navigate('Back')}>
+        onPress={() => navigation.goBack()}>
         <Text style={styles.backBTN}> ⟨ </Text>
       </TouchableOpacity>
 
