@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
-    paddingVertical: 0
+    paddingVertical: 8
   },
   save: {
     position: 'absolute',
