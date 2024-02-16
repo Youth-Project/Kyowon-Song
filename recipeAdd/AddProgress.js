@@ -27,7 +27,7 @@ const DetailList = ({ countList }) => {
 };
 
 {/* 조리과정 작성 스크린 */}
-function RecipeTab({navigation}) {
+const AddProgress = ({navigation}) => {
   const [text, onChangeText] = React.useState('');
 
   const [countList, setCountList] = useState([0])
