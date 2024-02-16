@@ -11,7 +11,7 @@ import {
 import Eye from "./components/AssetExample";
 
 
-function Loginpg({ navigation }) {
+const Loginpg = ({ navigation }) => {
 const [password, setPassword] = useState('');
 const [email, setEmail] = useState('');
 const [validation, setValidation] = useState("");
