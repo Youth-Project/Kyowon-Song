@@ -191,7 +191,7 @@ value={searchQuery} keyboardType="default"/>
         <View style={{left: 7, flexDirection: 'row'}}>
         {/*<Text style={styles.timeText}>{props.hour} 시간</Text>*/}
         <Image style={{top: 15, marginLeft: 4}} source={require('./assets/icons/clock.png')}/>
-        <Text style={styles.timeText}>{item.min} 분</Text>
+        <Text style={styles.timeText}>{item.min} 분 이내</Text>
         </View>
       </TouchableOpacity>
       )}
