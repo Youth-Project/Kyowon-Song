@@ -13,7 +13,7 @@ import { updateUser } from './dbFunctions';
 
 
 
-function Budgetpg() {
+const Budgetpg = ({navigation}) => {
   const [budget, onChangeBudget] = useState('');
 
   const changeBudget = (value: string) => {
