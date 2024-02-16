@@ -14,16 +14,69 @@ const SignupAgree = ({navigation}) => {
   const { useState } = React;
 
 
-const [isPressed, setIsPressed] = useState(false);
+  const [allCheck, setAllCheck] = useState(false);
+  const [ageCheck, setAgeCheck] = useState(false);
+  const [useCheck, setUseCheck] = useState(false);
+  const [marketingCheck, setMarketingCheck] = useState(false);
+  const [optCheck, setOptCheck] = useState(false);
+  const [opt2Check, setOpt2Check] = useState(false);
+  const [lastPressed, setlastPressed] = useState(false);
 
-  const allAgree = () => {
-    setIsPressed((prevIsRed) => !prevIsRed);
-    if(isPressed){
-      setRememberMe(!rememberMe);
+  const allBtnEvent = () => {
+    if (allCheck === false) {
+      setAllCheck(true);
+      setAgeCheck(true);
+      setUseCheck(true);
+      setMarketingCheck(true);
+      setOptCheck(true);
+      setOpt2Check(true);
+    } else {
+      setAllCheck(false);
+      setAgeCheck(false);
+      setUseCheck(false);
+      setMarketingCheck(false);
+      setOptCheck(false);
+      setOpt2Check(false);
     }
-    
   };
 
+  const ageBtnEvent = () => {
+    setAgeCheck(!ageCheck);
+  };
+
+  const useBtnEvent = () => {
+    setUseCheck(!useCheck);
+  };
+
+  const marketingBtnEvent = () => {
+    setMarketingCheck(!marketingCheck);
+  };
+
+  const optBtnEvent = () => {
+    setOptCheck(!optCheck);
+  };
+
+  const opt2BtnEvent = () => {
+    setOpt2Check(!opt2Check);
+  };
+
+  useEffect(() => {
+    if (ageCheck === true && useCheck === true && marketingCheck === true && optCheck === true  && opt2Check === true) {
+      setAllCheck(true);
+    } else {
+      setAllCheck(false);
+    }
+  }, [ageCheck, useCheck, marketingCheck, optCheck, opt2Check]);
+
+
+  const handleAllPress = () => {
+    if (ageCheck && useCheck && marketingCheck) {
+      setlastPressed(!lastPressed);
+      navigation.navigate('SignupPg');
+    } else {
+      alert('계속하려면 필수약관 동의가 필요해요.');
+    }
+  };
 
   return(
     <View style={styles.container}>
@@ -37,7 +90,7 @@ const [isPressed, setIsPressed] = useState(false);
 
   <Text style={{top: 68, fontSize: 20, right: 84}}>이용약관 동의</Text>
       
-  <TouchableOpacity
+  <View
         style={{top: 92,
     backgroundColor: '#F8F9FA',
     width: 300,
@@ -51,16 +104,16 @@ const [isPressed, setIsPressed] = useState(false);
 
     {/* 체크 버튼 */}
     <TouchableOpacity
-        style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
-        onPress={allAgree}> 
+        style={[styles.save, {backgroundColor: allCheck ? '#FEA655' : '#ccc'} ]} 
+        onPress={allBtnEvent}> 
         <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
       </TouchableOpacity>
 
         <Text style={{color: '#000', left: 35, marginRight: 5 }}>전체 동의</Text>
         <Text style={{color: '#828282', left: 35, }}>(선택 포함)</Text>
     </View>
-      </TouchableOpacity>
-  <TouchableOpacity
+      </View>
+  <View
         style={{top: 100, right: 25, 
     backgroundColor: '#F8F9FA',
     width: 250,
@@ -73,8 +126,8 @@ const [isPressed, setIsPressed] = useState(false);
 
       {/* 체크 버튼 */}
 <TouchableOpacity
-        style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
-        onPress={allAgree}> 
+        style={[styles.save, {backgroundColor: ageCheck ? '#FEA655' : '#ccc'} ]} 
+        onPress={ageBtnEvent}> 
         <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
       </TouchableOpacity>
 
@@ -82,8 +135,8 @@ const [isPressed, setIsPressed] = useState(false);
         <Text style={{color: '#FFC470', left: 35, }}>(필수)</Text>
 
     </View>
-      </TouchableOpacity>
-  <TouchableOpacity
+      </View>
+  <View
         style={{top: 100, right: 25, 
     backgroundColor: '#F8F9FA',
     width: 250,
@@ -95,8 +148,8 @@ const [isPressed, setIsPressed] = useState(false);
   <View style={{flexDirection: 'row', }}> 
     {/* 체크 버튼 */}
 <TouchableOpacity
-        style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
-        onPress={allAgree}> 
+        style={[styles.save, {backgroundColor: useCheck ? '#FEA655' : '#ccc'} ]} 
+        onPress={useBtnEvent}> 
         <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
       </TouchableOpacity>
 
@@ -107,8 +160,8 @@ const [isPressed, setIsPressed] = useState(false);
         <Text style={{ color: '#979797', fontSize: 20, bottom: 4}}>></Text>
         </TouchableOpacity>
     </View>
-      </TouchableOpacity>
-  <TouchableOpacity
+      </View>
+  <View
         style={{top: 100, right: 25, 
     backgroundColor: '#F8F9FA',
     width: 250,
@@ -120,9 +173,9 @@ const [isPressed, setIsPressed] = useState(false);
   <View style={{flexDirection: 'row', }}>
 
     {/* 체크 버튼 */}
-<TouchableOpacity
-        style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
-        onPress={allAgree}> 
+      <TouchableOpacity
+        style={[styles.save, {backgroundColor: marketingCheck ? '#FEA655' : '#ccc'} ]} 
+        onPress={marketingBtnEvent}> 
         <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
       </TouchableOpacity>
 
@@ -133,8 +186,8 @@ const [isPressed, setIsPressed] = useState(false);
         <Text style={{ color: '#979797', fontSize: 20, bottom: 4}}>></Text>
         </TouchableOpacity>
     </View>
-      </TouchableOpacity>
-  <TouchableOpacity
+      </View>
+  <View
         style={{top: 100, right: 25, 
     backgroundColor: '#F8F9FA',
     width: 250,
@@ -147,8 +200,8 @@ const [isPressed, setIsPressed] = useState(false);
 
       {/* 체크 버튼 */}
 <TouchableOpacity
-        style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
-        onPress={allAgree}> 
+        style={[styles.save, {backgroundColor: optCheck ? '#FEA655' : '#ccc'} ]} 
+        onPress={optBtnEvent}> 
         <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
       </TouchableOpacity>
 
@@ -159,8 +212,8 @@ const [isPressed, setIsPressed] = useState(false);
         <Text style={{ color: '#979797', fontSize: 20, bottom: 4}}>></Text>
         </TouchableOpacity>
     </View>
-      </TouchableOpacity>
-  <TouchableOpacity
+      </View>
+  <View
         style={{top: 100, right: 25, 
     backgroundColor: '#F8F9FA',
     width: 250,
@@ -173,27 +226,25 @@ const [isPressed, setIsPressed] = useState(false);
 
     {/* 체크 버튼 */}
 <TouchableOpacity
-        style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
-        onPress={allAgree}> 
+        style={[styles.save, {backgroundColor: opt2Check ? '#FEA655' : '#ccc'} ]} 
+        onPress={opt2BtnEvent}> 
         <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
       </TouchableOpacity>
 
         <Text style={{color: '#000', left: 33, marginRight: 5 }}>이메일 마케팅 수신 동의</Text>
         <Text style={{color: '#979797', left: 35, }}>(선택)</Text>
     </View>
-      </TouchableOpacity>
+      </View>
 
 
       <TouchableOpacity
         style={styles.buttonS}
-        onPress={() => navigation.navigate('SignupPg')}>
+        onPress={handleAllPress}>
         <Text style={styles.buttonText}>동의하고 계속하기</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-
 
 
 const styles = StyleSheet.create({
