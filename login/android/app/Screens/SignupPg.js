@@ -208,7 +208,7 @@ const validateEmail = email => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.log}
-        onPress={() => navigation.navigate('Reset')}>
+        onPress={() => navigation.navigate('LoginpgStack')}>
         <Text style={styles.saveTxt}>이미 계정이 있나요?  로그인하기</Text>
       </TouchableOpacity>
     </View>
