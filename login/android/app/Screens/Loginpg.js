@@ -160,12 +160,12 @@ secureTextEntry={isSecure}
 
       <TouchableOpacity
         style={styles.button}
-        onPress={()=> navigation.navigate('Budgetpg')}>
+        onPress={()=> navigation.navigate('SuccessLogin')}>
         <Text style={styles.buttonText}>로그인</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.signUp}
-        onPress={() => navigation.navigate('SignUp')}>
+        onPress={() => navigation.navigate('SignupPg')}>
         <Text style={styles.saveTxt}>회원가입</Text>
       </TouchableOpacity>
       <TouchableOpacity
