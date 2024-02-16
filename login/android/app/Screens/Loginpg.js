@@ -80,13 +80,13 @@ const [eye, setEye] = useState({
     if (eye[buttonName]) {
       switch (buttonName) {
         case 'eyeOpen':
-          return require('./assets/eyeOn.png');
+          return require('./assets/icons/eyeOn.png');
         default:
-          return require('./assets/eye.png');
+          return require('./assets/icons/eye.png');
       }
     } 
     else{
-      return require('./assets/eye.png');
+      return require('./assets/icons/eye.png');
     }
   };
 
@@ -153,7 +153,7 @@ secureTextEntry={isSecure}
       <TouchableOpacity
         style={[styles.save, {backgroundColor: isPressed ? '#FEA655' : '#ccc'} ]} 
         onPress={toggleRememberMe}> 
-        <Image style={{left: 2, top: 3}} source={require('./assets/checkIcon.png')}/>
+        <Image style={{left: 2, top: 3}} source={require('./assets/icons/checkIcon.png')}/>
       </TouchableOpacity>
     <Text style={{ fontSize: 12,
     color: '#757575', bottom: 22, right: 50 }}>로그인 정보 저장</Text>
