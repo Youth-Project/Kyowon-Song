@@ -35,13 +35,13 @@ const [eye, setEye] = useState({
     if (eye[buttonName]) {
       switch (buttonName) {
         case 'eyeOpen':
-          return require('./assets/eyeOn.png');
+          return require('../assets/icons/eyeOn.png');
         default:
-          return require('./assets/eye.png');
+          return require('../assets/icons/eye.png');
       }
     } 
     else{
-      return require('./assets/eye.png');
+      return require('../assets/icons/eye.png');
     }
   };
 
@@ -64,13 +64,13 @@ const [eye2, setEye2] = useState({
     if (eye2[buttonName]) {
       switch (buttonName) {
         case 'eyeOpen':
-          return require('./assets/eyeOn.png');
+          return require('./assets/icons/eyeOn.png');
         default:
-          return require('./assets/eye.png');
+          return require('./assets/icons/eye.png');
       }
     } 
     else{
-      return require('./assets/eye.png');
+      return require('./assets/icons/eye.png');
     }
   };
 
