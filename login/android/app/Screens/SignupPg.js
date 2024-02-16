@@ -14,7 +14,7 @@ import { authService } from "../app/firebaseConfig";
 
 
 
-function SignupPg() {
+const SignupPg = () => {
 
   const { useState } = React;
 
