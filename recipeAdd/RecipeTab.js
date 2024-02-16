@@ -234,7 +234,7 @@ value={searchQuery} keyboardType="default"/>
    위 두가지 필터를 통해 레시피 목록의 정렬 순서를 변경할 수 있습니다.</Text> 
 
 <View style={{alignItems: 'center'}}>
-  {/* <Image style={{marginTop: 15, }} source={require('./assets/icons/bookMark.png')}/> */}
+  {/* <Image style={{marginTop: 15, }} source={require('./assets/icons/bookmarkFill.png')}/> */}
 </View>
 
    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
