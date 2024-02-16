@@ -14,7 +14,7 @@ import { updateUser } from './dbFunctions';
 
 
 {/*비밀번호 재설정 */}
-function ForgotPW() {
+const ForgotPW = ({navigation}) => {
 
   {/* eye 버튼 */}
 const [eye, setEye] = useState({
