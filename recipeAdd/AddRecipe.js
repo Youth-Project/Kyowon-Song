@@ -94,7 +94,7 @@ const AddA = ({navigation}) => {
     width: 215,
     height: 330,
     borderRadius: 10, }}
-        onPress={() => navigation.navigate('Ingredients')}>
+        onPress={() => navigation.navigate('AddRecipeIngredients')}>
         <Text style={{
           top: 150,
           color: '#9C9C9C', 
