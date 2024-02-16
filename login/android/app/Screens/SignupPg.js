@@ -148,7 +148,7 @@ const validateEmail = email => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.back}
-        onPress={() => navigation.goBack()}>
+        onPress={() => navigation.navigate('LoginpgStack')}>
         <Text style={styles.backBTN}> ⟨ </Text>
       </TouchableOpacity>
 
