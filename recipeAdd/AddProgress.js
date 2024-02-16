@@ -89,8 +89,7 @@ const AddProgress = ({navigation}) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-{/*onPress={네비게이션 화면 못찾음}*/}
-          onPress={() => navigation.navigate('Recom')}>
+          onPress={() => navigation.navigate('RecipeTab')}>
           <Text style={styles.buttonText}>레시피 등록</Text>
         </TouchableOpacity>
         </View>
@@ -180,4 +179,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default RecipeTab;
+export default AddProgress;
