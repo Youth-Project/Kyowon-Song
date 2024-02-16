@@ -19,7 +19,7 @@ const SuccessPW = ({navigation}) => {
       <Text style={styles.center}>비밀번호 변경이 완료되었습니다.</Text>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('Loginpg')}>
+        onPress={() => navigation.navigate('LoginpgStack')}>
         <Text style={styles.buttonText}>로그인</Text>
       </TouchableOpacity>
       
