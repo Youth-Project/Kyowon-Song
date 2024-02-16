@@ -1,18 +1,16 @@
 {/* 부족한 부분: 항목이 채워진 조건하에 버튼이 채워지게, 조리시간 & 별컴 db연결, 요리이름 인풋창 한쪽으로만 늘어나게하기, 사진추가 누르면 갤러리연동 */}
+
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, TextInput, StyleSheet, Modal, Image } from 'react-native';
 
 const AddRecipeMain = ({navigation}) => {
   const [food, onChangeFood] = useState('');
-  const [hours, setHours] = useState('');
-  const [minutes, setMinutes] = useState('');
+  const [hour, setHour] = useState('');
+  const [min, setMin] = useState('');
   const [cookingTime, setCookingTime] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const handleMinChange = (value) => {
-    setMin(value);
-  };
 
 {/* 별컴포넌트 */}
   const [star, setStar] = useState({
@@ -26,30 +24,34 @@ const AddRecipeMain = ({navigation}) => {
       ...prevStates,
       [buttonName]: !prevStates[buttonName],
     }));
-    // 추가로 원하는 동작 수행
   }; 
+
+  let recipe_difficulty = 1;
 
   const getImageForButton = (buttonName) => {
     if (star[buttonName]) {
       // 작은 버튼이 눌렸을 때의 이미지 경로
       switch (buttonName) {
         case 'button2':
-          return require('./assets/star2.png');
+          recipe_difficulty = 2;
+          return require('./assets/icons/star2.png');
         case 'button3':
-          return require('./assets/star3.png');
+          recipe_difficulty = 3;
+          return require('./assets/icons/star3.png');
         default:
-          return require('./assets/star1.png');
+          recipe_difficulty = 1
+          return require('./assets/icons/star1.png');
       }
     } 
   };
 
 {/* 조리시간 업뎃 */}
   const updateCookingTime = () => {
-  const hasHour = hours && hours !== '0';
-  const hasMinute = minutes && minutes !== '0';
+  const hasHour = hour && hour !== '0';
+  const hasMinute = min && min !== '0';
 
   if (hasHour || hasMinute) {
-    const newCookingTime = `${hasHour ? hours + '시간' : ''} ${hasMinute ? minutes + '분' : ''}`;
+    const newCookingTime = `${hasHour ? hour + '시간' : ''} ${hasMinute ? min + '분' : ''}`;
     setCookingTime(newCookingTime);
   } else {
     setCookingTime('조리시간');
@@ -91,10 +93,10 @@ const AddRecipeMain = ({navigation}) => {
             placeholder="0" 
             keyboardType="numeric"
 
-value={hours}
-            onChangeText={(text) => setHours(text)}
+value={hour}
+            onChangeText={(text) => setHour(text)}
             />
-          <Text style={{ right: 16,fontSize: 15,top: 12,}}>시</Text>
+          <Text style={{ right: 16,fontSize: 15,top: 12,}}>시간</Text>
 
           <TextInput
             style={{fontSize: 15,
@@ -112,9 +114,9 @@ value={hours}
             placeholder="0" 
             keyboardType="numeric" 
             
-value={minutes}
+value={min}
 
-onChangeText={(text) => setMinutes(text)}
+onChangeText={(text) => setMin(text)}
             />
           <Text style={{ left: 20,fontSize: 15,top: 12,}} >분</Text>
           </View>
@@ -159,7 +161,8 @@ onChangeText={(text) => setMinutes(text)}
         value={food}
         placeholder="요리이름"
       />
-      
+    
+{/* 필요한 재료 */}
 <TouchableOpacity
         style={{ right: 62, top: 240,
         backgroundColor: '#FFFFFF',
@@ -168,6 +171,7 @@ onChangeText={(text) => setMinutes(text)}
     height: 330,
     borderRadius: 10, }}
         onPress={() => navigation.navigate('Ingredients')}>
+        <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' }} source={require('./assets/icons/bowl.png')}/>
         <Text style={{
           top: 150,
           color: '#9C9C9C', 
@@ -176,6 +180,9 @@ onChangeText={(text) => setMinutes(text)}
         }}>
         필요한 재료</Text>
       </TouchableOpacity>
+
+
+  {/* 조리시간 */}
 <TouchableOpacity
         style={{ left: 115, bottom: 91,
         backgroundColor: '#FFFFFF',
@@ -185,6 +192,7 @@ onChangeText={(text) => setMinutes(text)}
     borderRadius: 10,
     marginBottom: 15, }}
         onPress={() => setModalVisible(true)}>
+        <Image style={{left: 45, top: 15, position: 'absolute', alignItems: 'center',  }} source={require('./assets/icons/clock.png')}/>
         <Text style={{
           top: 78,
           color: '#9C9C9C', 
@@ -254,7 +262,7 @@ onChangeText={(text) => setMinutes(text)}
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonUnfill}
-        onPress={() => navigation.navigate('Ingredients')}>
+        onPress={() => navigation.navigate('AddProgress')}>
         <Text style={styles.buttonColorText}>다음</Text>
       </TouchableOpacity>
   </View>
