@@ -75,12 +75,11 @@ const AddRecipeMain = ({navigation}) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={{fontSize: 15,bottom: 20,right: 85,}}>요리 소요 시간</Text>
-      {/* 시간 입력하고 원본화면에 어떻게 저장하는지 모르겠음 */}
       <View style={{flexDirection: 'row'}}>
       <TextInput
             style={{fontSize: 15,
             borderWidth: 0.5,
-            height: 28,
+            height: 38,
             top: 5,
             width: 55,
             right: 30,
@@ -101,7 +100,7 @@ value={hour}
           <TextInput
             style={{fontSize: 15,
             borderWidth: 0.5,
-            height: 28,
+            height: 38,
             top: 5,
             width: 55,
             left: 4,
