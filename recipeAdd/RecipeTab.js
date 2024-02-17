@@ -159,10 +159,11 @@ value={searchQuery} keyboardType="default"/>
     <ScrollView style={styles.containerScroll}>
       <View>
   {/* 레시피 포스트 컴포넌트 */}
-  <FlatList style={{alignItems: 'center'}}
+  <FlatList
         data={filteredData}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
+    <View style={{ alignItems: 'center', left: 20}}>
       <TouchableOpacity
         style={styles.post}
         onPress={() => navigation.navigate('RecipeMain')}>
@@ -194,6 +195,7 @@ value={searchQuery} keyboardType="default"/>
         <Text style={styles.timeText}>{item.min} 분 이내</Text>
         </View>
       </TouchableOpacity>
+    </View>
       )}
         numColumns={2}
       />
