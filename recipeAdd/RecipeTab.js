@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import { TouchableOpacity, TextInput, Image, Text, ScrollView, View, Button, StyleSheet, FlatList, SafeAreaView, Modal } from 'react-native';
+import { TouchableOpacity, TextInput, Image, Text, ScrollView, View, Button, StyleSheet, FlatList, Dimensions, Modal } from 'react-native';
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 const dishes = [
     { id: 1, food: '부대찌개', hour: 1, min: 30, lacking: '햄', img: ''}, { id: 2, food: '닭볶음탕', hour: 1, min: 30, lacking: '닭', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''},{ id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}]
@@ -54,13 +55,13 @@ const [my, setMy] = useState({
     if (my[buttonName]) {
       switch (buttonName) {
         case 'checkFill':
-          return require('./assets/icons/checkFill.png');
+          return require('./assets/checkFill.png');
         default:
-          return require('./assets/icons/check.png');
+          return require('./assets/check.png');
       }
     } 
     else{
-      return require('./assets/icons/check.png');
+      return require('./assets/check.png');
     }
   };
 
@@ -82,13 +83,13 @@ const [my, setMy] = useState({
     if (star[buttonName]) {
       switch (buttonName) {
         case 'button2':
-          return require('./assets/icons/quick.png');
+          return require('./assets/quick.png');
         default:
-          return require('./assets/icons/avail.png');
+          return require('./assets/avail.png');
       }
     } 
     else{
-      return require('./assets/icons/avail.png');
+      return require('./assets/avail.png');
     }
   };
 
@@ -109,13 +110,13 @@ const [book, setBook] = useState({
     if (book[buttonName]) {
       switch (buttonName) {
         case 'bookmarkFill':
-          return require('./assets/icons/bookmarkFill.png');
+          return require('./assets/bookmarkFill.png');
         default:
-          return require('./assets/icons/bookmark.png');
+          return require('./assets/bookmark.png');
       }
     } 
     else{
-      return require('./assets/icons/bookmark.png');
+      return require('./assets/bookmark.png');
     }
   };
 
@@ -126,7 +127,7 @@ const [book, setBook] = useState({
         <TextInput style={{ borderWidth: 0, top: 16, width: 300, height: 20, left: 10, color: '#9C9C9C', fontSize: 14, fontFamily: 'NanumGothic', flexWrap: 'wrap',  }} placeholder="검색" onChangeText={setSearchQuery}
 value={searchQuery} keyboardType="default"/>
  {/* 돋보기 */}
-  <Image style={{position: 'absolute', marginLeft: 16}} source={require('./assets/icons/search.png')}/>
+  <Image style={{position: 'absolute', marginLeft: 16}} source={require('./assets/search.png')}/>
       
   <View style={{flexDirection: 'row', top: 48, right: 55, gap: 4}}>
   {/* 레시피 도움말 i버튼 */}
@@ -163,7 +164,7 @@ value={searchQuery} keyboardType="default"/>
         data={filteredData}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-    <View style={{ alignItems: 'center', left: 20}}>
+  <View style={{ alignItems: 'center', left: 20}}>
       <TouchableOpacity
         style={styles.post}
         onPress={() => navigation.navigate('RecipeMain')}>
@@ -172,7 +173,7 @@ value={searchQuery} keyboardType="default"/>
         />
         <Text style={styles.foodText}>{item.food}</Text>
         <View style={{left: 12, top: 15}}>
-        <TouchableOpacity style={{position: 'absolute', left: 110, bottom: 23}} onPress={() => handleBookmarkClick('bookmarkFill')}>
+    <TouchableOpacity style={{position: 'absolute', left: 110, bottom: 23}} onPress={() => handleBookmarkClick('bookmarkFill')}>
         <Image source={getImageForBookmark('bookmarkFill')}/>
     </TouchableOpacity>
         
@@ -191,7 +192,7 @@ value={searchQuery} keyboardType="default"/>
          
         <View style={{left: 7, flexDirection: 'row'}}>
         {/*<Text style={styles.timeText}>{props.hour} 시간</Text>*/}
-        <Image style={{top: 15, marginLeft: 4}} source={require('./assets/icons/clock.png')}/>
+        <Image style={{top: 15, marginLeft: 4}} source={require('./assets/clock.png')}/>
         <Text style={styles.timeText}>{item.min} 분 이내</Text>
         </View>
       </TouchableOpacity>
@@ -200,6 +201,7 @@ value={searchQuery} keyboardType="default"/>
         numColumns={2}
       />
   </View>
+  
     </ScrollView>
 
   {/* 레시피 도움말 모달 */}
@@ -228,15 +230,15 @@ value={searchQuery} keyboardType="default"/>
   <Text style={{fontSize: 12,}}>으로, 조리 가능한 레시피 목록과 부족한 재료의 개수를 볼 수 있습니다. </Text>
 
 <View style={{justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-  <Image style={{marginTop: 15}} source={require('./assets/icons/avail.png')}/>
-  <Image style={{marginTop: 15}} source={require('./assets/icons/quick.png')}/>
+  <Image style={{marginTop: 15}} source={require('./assets/avail.png')}/>
+  <Image style={{marginTop: 15}} source={require('./assets/quick.png')}/>
 </View>
 
    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
    위 두가지 필터를 통해 레시피 목록의 정렬 순서를 변경할 수 있습니다.</Text> 
 
 <View style={{alignItems: 'center'}}>
-  {/* <Image style={{marginTop: 15, }} source={require('./assets/icons/bookmarkFill.png')}/> */}
+  <Image style={{marginTop: 15, }} source={require('./assets/bookmarkFill.png')}/>
 </View>
 
    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
@@ -252,14 +254,14 @@ value={searchQuery} keyboardType="default"/>
 </View>
 
 <View style={{alignItems: 'center'}}>
-{/* <Image style={{marginTop: 18, }} source={require('./assets/icons/add.png')}/> */}
+  <Image style={{marginTop: 18, }} source={require('./assets/add.png')}/>
 </View>
 
 <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
     우측 하단의 버튼을 이용하여 내가 만든 레시피를 등록할 수 있습니다. </Text> 
 
 <View style={{alignItems: 'center'}}>
-    {/*<Image style={{marginTop: 15,}} source={require('./assets/icons/isMyRecipe.png')}/>*/}
+    <Image style={{marginTop: 15,}} source={require('./assets/isMyRecipe.png')}/>
 </View>
     <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
      좌측 상단의 체크박스를 이용하여 내가 만든 레시피만 따로 볼 수 있습니다.</Text> 
