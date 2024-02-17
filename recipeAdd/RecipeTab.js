@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import { TouchableOpacity, TextInput, Image, Text, ScrollView, View, Button, StyleSheet, FlatList, Dimensions, Modal } from 'react-native';
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+import { TouchableOpacity, TextInput, Image, Text, ScrollView, View, Button, StyleSheet, FlatList, SafeAreaView, Modal } from 'react-native';
 
 const dishes = [
     { id: 1, food: '부대찌개', hour: 1, min: 30, lacking: '햄', img: ''}, { id: 2, food: '닭볶음탕', hour: 1, min: 30, lacking: '닭', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''},{ id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, food: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}]
@@ -160,11 +159,10 @@ value={searchQuery} keyboardType="default"/>
     <ScrollView style={styles.containerScroll}>
       <View>
   {/* 레시피 포스트 컴포넌트 */}
-  <FlatList
+  <FlatList style={{alignItems: 'center'}}
         data={filteredData}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-  <View style={{ alignItems: 'center', left: 20}}>
       <TouchableOpacity
         style={styles.post}
         onPress={() => navigation.navigate('RecipeMain')}>
@@ -196,12 +194,10 @@ value={searchQuery} keyboardType="default"/>
         <Text style={styles.timeText}>{item.min} 분 이내</Text>
         </View>
       </TouchableOpacity>
-    </View>
       )}
         numColumns={2}
       />
   </View>
-  
     </ScrollView>
 
   {/* 레시피 도움말 모달 */}
@@ -238,7 +234,7 @@ value={searchQuery} keyboardType="default"/>
    위 두가지 필터를 통해 레시피 목록의 정렬 순서를 변경할 수 있습니다.</Text> 
 
 <View style={{alignItems: 'center'}}>
-  <Image style={{marginTop: 15, }} source={require('./assets/bookmarkFill.png')}/>
+  {/* <Image style={{marginTop: 15, }} source={require('./assets/bookMark.png')}/> */}
 </View>
 
    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
@@ -254,14 +250,14 @@ value={searchQuery} keyboardType="default"/>
 </View>
 
 <View style={{alignItems: 'center'}}>
-  <Image style={{marginTop: 18, }} source={require('./assets/add.png')}/>
+{/* <Image style={{marginTop: 18, }} source={require('./assets/add.png')}/> */}
 </View>
 
 <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
     우측 하단의 버튼을 이용하여 내가 만든 레시피를 등록할 수 있습니다. </Text> 
 
 <View style={{alignItems: 'center'}}>
-    <Image style={{marginTop: 15,}} source={require('./assets/isMyRecipe.png')}/>
+    {/*<Image style={{marginTop: 15,}} source={require('./assets/isMyRecipe.png')}/>*/}
 </View>
     <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
      좌측 상단의 체크박스를 이용하여 내가 만든 레시피만 따로 볼 수 있습니다.</Text> 
