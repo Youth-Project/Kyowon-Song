@@ -195,19 +195,19 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 15,
     borderWidth: 0.5,
-    height: 28,
+    height: 38,
     width: 232,
     marginBottom: 30,
     color: '#878787',
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
-    paddingVertical: 8
+    paddingVertical: 0
   },
   save: {
     position: 'absolute',
     left: 85,
-    top: 375,
+    top: 395,
     width: 15,
     height: 15, 
     borderRadius: 25,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   inputS: {
     fontSize: 15,
     borderWidth: 0.5,
-    height: 28,
+    height: 38,
     width: 232,
     top: 130,
     marginBottom: 40,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   inputP: {
     fontSize: 15,
     borderWidth: 0.5,
-    height: 28,
+    height: 38,
     width: 232,
     top: 80,
     marginBottom: 40,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   inputRe: {
     fontSize: 15,
     borderWidth: 0.5,
-    height: 28,
+    height: 38,
     width: 160,
     top: 82,
     right: 35,
