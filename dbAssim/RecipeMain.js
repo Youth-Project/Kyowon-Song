@@ -21,7 +21,7 @@ const RecipeMain = ({ navigation, route }) => {
           setRecipeName(NameData);
           setRecipeTime(recipeData.recipe_time);
           setRecipeIngredients(recipeData.recipe_ingredients);
-          setRecipeImage(recipeData.recipe_image_url);
+          setRecipeImage(recipeData.recipe_image);
           setRecipeDifficulty(recipeData.recipe_difficulty);
         } else {
           console.error('Recipe not found!');
@@ -122,12 +122,14 @@ const RecipeMain = ({ navigation, route }) => {
         textAlign: 'center',
         }}>
         난이도</Text>
-    </View>
-{/* 별컴포넌트 */}
+  {/* 별컴포넌트 */}
   <View style={{width: 24, height: 24, backgroundColor: 'transparent', marginLeft: 10, marginTop: 50, }}
         onPress={() => handleSmallButtonClick({recipeDifficulty})}        >
-        <Image style={{right: 34}} source={getImageForButton({recipeDifficulty})} />
+        <Image source={getImageForButton({recipeDifficulty})} />
   </View>
+  
+    </View>
+
         
 
       <View style={styles.row}>
