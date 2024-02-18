@@ -68,10 +68,26 @@ const RecipeMain = ({ navigation, route }) => {
           return require('./assets/icons/star1.png');
     } 
   };
+
+  {/* 사진없을때 */}
+  const photoImage = () => {
+  if(recipeImage==''){
+    return require('./assets/icons/photoNotReady.png');
+  }
+  else{
+    return {uri: recipeImage};
+  }
+};
   
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image source={{ uri: recipeImage }} style={styles.image}/>
+    <View contentContainerStyle={styles.container}>
+{/* 사진추가 */}
+      <View
+        style={{top: 35,
+    marginBottom: 20, 
+    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} >
+    <Image source={photoImage()}/>
+    </View>
 
       <View style={styles.titleContainer}>
 
@@ -87,7 +103,7 @@ const RecipeMain = ({ navigation, route }) => {
   
     {/* 재료 & 양 */}
 <View
-        style={{ right: 62, top: 240,
+        style={{ right: 62, top: 190,
         backgroundColor: '#FFFFFF',
     paddingVertical: 20,
     width: 215,
@@ -124,7 +140,7 @@ const RecipeMain = ({ navigation, route }) => {
   </ScrollView>      
       </View>
 
-  <View style={{ left: 115, bottom: 91,
+  <View style={{ left: 115, bottom: 140,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 112,
@@ -146,7 +162,7 @@ const RecipeMain = ({ navigation, route }) => {
 
 {/* 난이도 */}
     <View
-        style={{ left: 115, bottom: 91,
+        style={{ left: 115, bottom: 140,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 112,
@@ -184,7 +200,7 @@ const RecipeMain = ({ navigation, route }) => {
           <Text style={styles.buttonText}>조리하기</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -198,7 +214,7 @@ const styles = StyleSheet.create({
   },  
   
   titleContainer: {
-    top: 240, right: 130, marginLeft: 10,
+    top: 190, right: 130, marginLeft: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     paddingLeft: 6, 
@@ -237,7 +253,7 @@ const styles = StyleSheet.create({
   
   row: {
     position: 'absolute',
-    top: 570,
+    top: 530,
     flexDirection: 'row', 
     justifyContent: 'space-evenly',
     gap: 25,
