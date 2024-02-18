@@ -134,18 +134,16 @@ onChangeText={(text) => setMin(text)}
 
 {/* 사진추가 */}
     <TouchableOpacity
-        style={{top: 83,
+        style={{top: 35,
     marginBottom: 20, 
     paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} >
     <Image source={require('./assets/icons/addPhoto.png')}/>
     </TouchableOpacity>
 
-{/*<ScrollView style={{top: 100, height: 'auto'}}> */}
-
 {/*텍스트박스 어떻게 한쪽으로만 늘어나게하지 */}
       <TextInput
         style={{
-          top: 240, right: 130, 
+          top: 190, right: 130, 
           fontSize: 20, 
         backgroundColor: '#FFFFFF',
         
@@ -160,13 +158,13 @@ onChangeText={(text) => setMin(text)}
     
 {/* 필요한 재료 */}
 <TouchableOpacity
-        style={{ right: 62, top: 240,
+        style={{ right: 62, top: 190,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 215,
     height: 330,
     borderRadius: 10, }}
-        onPress={() => navigation.navigate('Ingredients')}>
+        onPress={() => navigation.navigate('AddRecipeIngredients')}>
         <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' }} source={require('./assets/icons/bowl.png')}/>
         <Text style={{
           top: 150,
@@ -180,7 +178,7 @@ onChangeText={(text) => setMin(text)}
 
   {/* 조리시간 */}
 <TouchableOpacity
-        style={{ left: 115, bottom: 91,
+        style={{ left: 115, bottom: 140,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 112,
@@ -199,7 +197,7 @@ onChangeText={(text) => setMin(text)}
       </TouchableOpacity>
 
       <View
-        style={{ left: 115, bottom: 91,
+        style={{ left: 115, bottom: 140,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 112,
@@ -299,7 +297,7 @@ const styles = StyleSheet.create({
 
   row: {
     position: 'absolute',
-    top: 570,
+    top: 530,
     flexDirection: 'row', 
     justifyContent: 'space-evenly',
     gap: 25,
