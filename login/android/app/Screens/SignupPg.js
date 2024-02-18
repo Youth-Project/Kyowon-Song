@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
-    paddingVertical: 0
+    paddingTop: 7,
   },
   save: {
     position: 'absolute',
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
-    paddingVertical: 0
+    paddingTop: 7,
   },
   buttonS: {
     top: 183,
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
-    paddingVertical: 0
+    paddingTop: 7,
   },
   buttonP: {
     top: 93,
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth:0,
-    paddingVertical: 0
+    paddingTop: 7,
   },
   smallButton: {
     left: 85,
