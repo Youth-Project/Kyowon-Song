@@ -125,16 +125,20 @@ const RecipeMain = ({ navigation, route }) => {
     alignItems: 'center',
     top: 2,
     }}>
-    <Text style={{color: '#000', marginHorizontal: 2,
+  {recipeIngredients.map((ingred, index) => (
+    <Text key={index} style={{color: '#000', marginHorizontal: 2,
         fontSize: 14, }}>
-{recipeIngredients.ingred}
-    </Text>     
+{ingred}
+    </Text> 
+  ))}
   </View>
  <View style={{ left: 47, alignItems: 'center',
     }}>
-    <Text style={{ color: '#000', marginHorizontal: 2,
+  {recipeIngredients.map((amount, index) => (
+    <Text key={index} style={{ color: '#000', marginHorizontal: 2,
         fontSize: 14, bottom: 18 }}>
-{recipeIngredients.amount} </Text>
+{amount} </Text>
+  ))}
   </View>
 </View>    
   </ScrollView>      
