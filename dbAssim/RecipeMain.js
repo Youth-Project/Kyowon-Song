@@ -102,7 +102,7 @@ const RecipeMain = ({ navigation, route }) => {
           fontSize: 17, 
           textAlign: 'center',
           bottom: 15
-        }}>{recipeTime[0] !== 0 && `${recipeTime[0]}시간 `} {recipeTime[1] !== 0 && `${recipeTime[1]}분`}{'\n'}이내
+        }}>{recipeTime[0] !== 0 && `${recipeTime[0]}시간 `}{recipeTime[1] !== 0 && `${recipeTime[1]}분`}{'\n'}이내
         </Text>
       </View>
     </View>
