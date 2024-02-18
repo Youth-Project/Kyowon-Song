@@ -75,12 +75,11 @@ const AddRecipeMain = ({navigation}) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={{fontSize: 15,bottom: 20,right: 85,}}>요리 소요 시간</Text>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{flexDirection: 'row', marginTop: 8 }}>
       <TextInput
             style={{fontSize: 15,
             borderWidth: 0.5,
             height: 38,
-            top: 5,
             width: 55,
             right: 30,
             color: '#878787',
@@ -88,6 +87,7 @@ const AddRecipeMain = ({navigation}) => {
             borderTopWidth: 0,
             borderLeftWidth: 0,
             borderRightWidth:0,
+            paddingTop: 6,
             marginLeft: 5}}
             placeholder="0" 
             keyboardType="numeric"
@@ -101,7 +101,6 @@ value={hour}
             style={{fontSize: 15,
             borderWidth: 0.5,
             height: 38,
-            top: 5,
             width: 55,
             left: 4,
             color: '#878787',
@@ -109,6 +108,7 @@ value={hour}
             borderTopWidth: 0,
             borderLeftWidth: 0,
             borderRightWidth:0,
+            paddingTop: 6,
             marginLeft: 5}}
             placeholder="0" 
             keyboardType="numeric" 
@@ -132,15 +132,12 @@ onChangeText={(text) => setMin(text)}
     </Modal>
 
 
-      <TouchableOpacity
+{/* 사진추가 */}
+    <TouchableOpacity
         style={{top: 83,
     marginBottom: 20, 
-    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139,}} >
-      <Text style={{top: 60,
-    fontSize: 12,
-    color: '#9C9C9C',
-    textAlign: 'center',
-    }}>사진 추가</Text>
+    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} >
+    <Image source={require('./assets/icons/addPhoto.png')}/>
     </TouchableOpacity>
 
 {/*<ScrollView style={{top: 100, height: 'auto'}}> */}
@@ -326,7 +323,7 @@ const styles = StyleSheet.create({
     fontFamily: 'NanumGothic',
   },
   modButton: {
-    top: 30,
+    top: 40,
     width: 90,
     borderWidth: 1,
     borderColor: '#FEA655',
