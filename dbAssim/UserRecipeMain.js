@@ -85,7 +85,44 @@ const RecipeMain = ({ navigation, route }) => {
         </TouchableOpacity>
       </View>
   
-      <Text>{recipeDifficulty}</Text>
+  {/* 재료 & 양 */}
+<View
+        style={{ right: 62, top: 240,
+        backgroundColor: '#FFFFFF',
+    paddingVertical: 20,
+    width: 215,
+    height: 330,
+    borderRadius: 10, 
+    }}>
+    <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' , }} source={require('./assets/icons/bowl.png')}/>
+
+<ScrollView style={{
+    width: 215,
+    height: 'auto', 
+    top: 20,
+    marginBottom: 20
+    }}>
+  <View style={{flextDirection: 'row',  }}>
+  <View style={{ 
+    marginHorizontal: 2,
+    right: 40,
+    alignItems: 'center',
+    top: 2,
+    }}>
+    <Text style={{color: '#000', marginHorizontal: 2,
+        fontSize: 14, }}>
+{recipeIngredients.ingred}
+    </Text>     
+  </View>
+ <View style={{ left: 47, alignItems: 'center',
+    }}>
+    <Text style={{ color: '#000', marginHorizontal: 2,
+        fontSize: 14, bottom: 18 }}>
+{recipeIngredients.amount} </Text>
+  </View>
+</View>    
+  </ScrollView>      
+      </View>
 
   <View style={{ left: 115, bottom: 91,
         backgroundColor: '#FFFFFF',
