@@ -8,7 +8,6 @@ const dishes = [
     //부족한 재료 수 string으로 변환가능한지
 
 
-
 const RecipeTab = ({ item, navigation }) => {
 
     //레시피포스트 순서정렬 
@@ -21,11 +20,6 @@ const RecipeTab = ({ item, navigation }) => {
         fetchRecipeData();
     //    fetchBookmarkedRecipes();
       }, []);
-
-    //이거 내레시피만 보기인가..?
-    const handleToggleSwitch = () => {
-        setShowUserRecipes((prev) => !prev);
-    };
 
       //가나다순 함수..?
       const orderByKorean = async () => {
@@ -198,6 +192,8 @@ const [my, setMy] = useState({
       ...prevStates,
       [buttonName]: !prevStates[buttonName],
     }));
+    setShowUserRecipes((prevStates) => !prevStates);
+
   }; 
 
   const getImageForCheckbox = (buttonName) => {
@@ -251,7 +247,7 @@ value={searchQuery} keyboardType="default"/>
         <Text style={{ fontSize: 10}}>
           내가 만든 레시피만 보기
         </Text>
-    <TouchableOpacity onPress={() => handleCheckboxClick('checkFill')} onValueChange={handleToggleSwitch}
+    <TouchableOpacity onPress={() => handleCheckboxClick('checkFill')}
             value={showUserRecipes}>
         <Image source={getImageForCheckbox('checkFill')}/>
     </TouchableOpacity>
@@ -277,8 +273,8 @@ value={searchQuery} keyboardType="default"/>
   {recipeData.map((recipe) => (
   <FlatList
         data={filteredData}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
+        keyExtractor={(recipe) => recipe.name}
+        renderItem={({ recipe }) => (
             
       <TouchableOpacity key={recipe.id}
         style={styles.post}
