@@ -13,19 +13,18 @@ const RecipeTab = ({navigation}) => {
 //    fetchBookmarkedRecipes();
   }, []);
 
-  //이게 내 레시피만 보기인가...?
 const handleToggleSwitch = () => {
   setShowUserRecipes((prev) => !prev);
 };
 
 const orderByKorean = async () => {
-  const koreanOrder = await firestore().collection('recipes').orderBy('recipeName').get();
+  const koreanOrder = await firestore().collection('recipe').orderBy('recipeName').get();
   return koreanOrder.docs.map((doc) => doc.data());
 };
 
 // 부족한 재료 갯수가 적은 순으로 정렬하는 함수
 const refrigeratorOrderByLack = async (refrigeratorIngredients) => {
-  const lackOrder = await firestore().collection('recipes').get();
+  const lackOrder = await firestore().collection('recipe').get();
 
   const sortedRecipe = lackOrder.docs
     .map((recipeDoc) => {
@@ -106,47 +105,27 @@ const handleSortOrder = async (orderType) => {
   }
 };
 
+  const [searchQuery, setSearchQuery] = useState(‘’);
+  const allFood = [...fetchedRecipes];
+
+  const filteredData = searchQuery
+    ? allFood.filter(recipe =>
+        recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : allFood;
+const handleSearch = (text) => {
+setSearchQuery(text);
+}
+
   return (
     <View style={styles.container}>
-         <View>
-    <View style={{ left: 40, top: 20, width: 310, height: 48, paddingVertical: 8, paddingHorizontal: 40, backgroundColor: 'white', borderRadius: 15, justifyContent: 'center', flexDirection: 'column', }}>
-        <TextInput style={{ borderWidth: 0, top: 16, width: 300, height: 20, left: 10, color: '#9C9C9C', fontSize: 14, fontFamily: 'NanumGothic', flexWrap: 'wrap',  }} placeholder="검색" onChangeText={setSearchQuery}
-value={searchQuery} keyboardType="default"/>
- {/* 돋보기 */}
-  <Image style={{position: 'absolute', marginLeft: 16}} source={require('../assets/icons/search.png')}/>
-      
-  <View style={{flexDirection: 'row', top: 48, right: 55, gap: 4}}>
-  {/* 레시피 도움말 i버튼 */}
-  <TouchableOpacity
-        style={styles.infoBtn}
-        onPress={() => setModalVisible(true)}>
-        <Text style={styles.infoTxt}>i</Text>
-      </TouchableOpacity>
-        <Text style={{ fontSize: 10}}>
-          내가 만든 레시피만 보기
-        </Text>
-    <TouchableOpacity onPress={() => handleCheckboxClick('checkFill')}
-            value={showUserRecipes}>
-        <Image source={getImageForCheckbox('checkFill')}/>
-    </TouchableOpacity>
-    
-  </View>
-  
-
-  {/* 조리가능 순 */}
-<TouchableOpacity onPress={() => handleSmallButtonClick('button2')} style={{ border: 'none', backgroundColor: 'transparent', left: 180, top: 33 }}>
-          <Image source={getImageForButton('button2')}/>
-        </TouchableOpacity>
-      </View>
-
-
-  {/* 동그라미 추가 버튼 */}
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddRecipeMain')}>
-      <Text style={{color: 'white', textAlign: 'center', fontSize: 47, bottom: 7, }}>+</Text>
-        </TouchableOpacity>
-</View>
-
-
+  <TextInput
+        style={{ borderWidth: 0, top: 16, width: 300, height: 20, left: 10, color: '#9C9C9C', fontSize: 14, fontFamily: 'NanumGothic', flexWrap: 'wrap' }}
+        placeholder="검색"
+        onChangeText={handleSearch}
+        value={searchQuery}
+        keyboardType="default"
+      />
       <ScrollView style={styles.containerScroll}>
         <View style={styles.row}>
           {/* Recipe list */}
@@ -195,6 +174,34 @@ value={searchQuery} keyboardType="default"/>
           {/* Add more sorting buttons as needed */}
       </View>
     </View>
+
+
+
+      {/* Filtering and Sorting Controls */}
+      <View style={styles.controls}>
+        <View style={styles.filterSwitchContainer}>
+          <Text>Show User Recipes</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={showUserRecipes ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={handleToggleSwitch}
+            value={showUserRecipes}
+          />
+        </View>
+        <TouchableOpacity style={styles.addButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.addButtonText}>Add Recipe</Text> 
+        </TouchableOpacity>
+        <View style={styles.sortButtons}>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('korean')}>
+            <Text>Sort by Korean</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('lack')}>
+            <Text>Sort by Lack</Text>
+          </TouchableOpacity>
+          {/* Add more sorting buttons as needed */}
+        </View>
+      </View>
     </View>
   )
 };
@@ -263,24 +270,6 @@ const styles = StyleSheet.create({
     paddingBottom: 80, 
     gap: 20,
     
-  },
-addButton:{
-    width:55,
-    height:55,
-    borderRadius: 50,
-    position: 'absolute',
-    right: 30,
-    bottom: 80,
-    zIndex: 2,
-    backgroundColor: '#FEA655',
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10
   },
 });
 
