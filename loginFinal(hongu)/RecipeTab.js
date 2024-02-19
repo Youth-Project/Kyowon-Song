@@ -280,7 +280,7 @@ value={searchQuery} keyboardType="default"/>
         style={styles.post}
         onPress={() => navigation.navigate('RecipeMain', { recipeId: recipe.id })}>
          <Image source={photoImage()}  
-      style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7}} 
+      style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7,  backgroundColor: '#ccc'}} 
         />
         <Text style={styles.foodText}>{item.food}</Text>
         <View style={{left: 12, top: 15}}>
