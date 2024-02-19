@@ -271,12 +271,13 @@ value={searchQuery} keyboardType="default"/>
       <View style={{ alignItems: 'center', }}>
   {/* 레시피 포스트 컴포넌트 */}
   {recipeData.map((recipe) => (
+      <View key={recipe.id}>
   <FlatList
         data={filteredData}
         keyExtractor={(recipe) => recipe.name}
         renderItem={({ recipe }) => (
             
-      <TouchableOpacity key={recipe.id}
+      <TouchableOpacity key={recipe}
         style={styles.post}
         onPress={() => navigation.navigate('RecipeMain', { recipeId: recipe.id })}>
          <Image source={photoImage()}  
@@ -311,6 +312,7 @@ value={searchQuery} keyboardType="default"/>
       )} 
         numColumns={2} 
       />
+            </View>
       ))}
   </View>
   
