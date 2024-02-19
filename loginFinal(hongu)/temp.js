@@ -126,7 +126,11 @@ setSearchQuery(text);
         value={searchQuery}
         keyboardType="default"
       />
-      <ScrollView style={styles.containerScroll}>
+      <ScrollView style={styles.containerScroll} 
+      data={filteredData}
+       keyExtractor={(recipe) => recipe.id.toString()}
+        renderItem={({ recipe }) => (
+          >
         <View style={styles.row}>
           {/* Recipe list */}
           {recipeData.map((recipe) => (
