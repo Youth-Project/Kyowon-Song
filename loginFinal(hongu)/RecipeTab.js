@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { TouchableOpacity, TextInput, Image, Text, ScrollView, View, Button, StyleSheet, FlatList, Dimensions, Modal } from 'react-native';
 import firestore from "@react-native-firebase/firestore";
 
@@ -143,23 +143,23 @@ const refrigeratorOrderByLack = async (refrigeratorIngredients) => {
             case 'button2':
               const koreanOrder = await orderByKorean();
               setRecipeData(koreanOrder);
-              return require('./assets/icons/koreanOrder.png');
+              return require('../assets/icons/koreanOrder.png');
             default:
               const lackOrder = await refrigeratorOrderByLack(refrigeratorIngredients);
               setRecipeData(lackOrder);
-              return require('./assets/icons/avail.png');
+              return require('../assets/icons/avail.png');
           }
         } 
         else{
           const lackOrder = await refrigeratorOrderByLack(refrigeratorIngredients);
           setRecipeData(lackOrder);
-          return require('./assets/icons/avail.png');
+          return require('../assets/icons/avail.png');
         }
       };
 
       const photoImage = () => {
         if(item.image==''){
-          return require('./assets/icons/photoNotReady.png');
+          return require('../assets/icons/photoNotReady.png');
         }
         else{
           return {uri: item.image};
