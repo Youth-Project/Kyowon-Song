@@ -1,186 +1,127 @@
-import React, {useState, useEffect} from 'react';
-import { TouchableOpacity, TextInput, Image, Text, ScrollView, View, Button, StyleSheet, FlatList, Dimensions, Modal } from 'react-native';
-import firestore from "@react-native-firebase/firestore";
+import React, { useState, useEffect, } from 'react';
+import { View, Text, TouchableOpacity , StyleSheet, TextInput, Modal, ScrollView,Switch,Image} from 'react-native';
+//import firestore from "@react-native-firebase/firestore";
+//import { CurrentRenderContext } from '@react-navigation/native';
 
+const RecipeTab = ({navigation}) => {
+  const [showUserRecipes, setShowUserRecipes] = useState(false);
+  const [recipeData, setRecipeData] = useState([]);
+  const [refrigeratorIngredients, setRefrigeratorIngredients] = useState([]);
+  const [bookmarkedRecipes, setBookmarkedRecipes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+    // Filtering recipes based on the search query
+    const filteredData = recipeData.filter((recipe) =>
+      recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  useEffect(() => {
+    fetchRecipeData();
+    fetchBookmarkedRecipes();
+  }, []);
 
-const dishes = [
-    { id: 1, name: '부대찌개', hour: 1, min: 30, lacking: '햄', img: ''}, { id: 2, name: '닭볶음탕', hour: 1, min: 30, lacking: '닭', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''},{ id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}, { id: 3, name: '부대찌개', hour: 1, min: 30, lacking: '햄', lackMore: '+3', img: ''}]
-    //부족한 재료 수 string으로 변환가능한지
+const handleToggleSwitch = () => {
+  setShowUserRecipes((prev) => !prev);
+};
 
+const orderByKorean = async () => {
+  const koreanOrder = await firestore().collection('recipe').orderBy('recipeName').get();
+  return koreanOrder.docs.map((doc) => doc.data());
+};
 
-const RecipeTab = ({ item, navigation }) => {
-
-    //레시피포스트 순서정렬 
-    const [showUserRecipes, setShowUserRecipes] = useState(false);
-    const [recipeData, setRecipeData] = useState([]);
-    const [refrigeratorIngredients, setRefrigeratorIngredients] = useState([]);
-    const [bookmarkedRecipes, setBookmarkedRecipes] = useState([]);
-
-    useEffect(() => {
-        fetchRecipeData();
-    //    fetchBookmarkedRecipes();
-      }, []);
-
-      //가나다순 함수..?
-      const orderByKorean = async () => {
-        const koreanOrder = await firestore().collection('recipe').orderBy('recipeName').get();
-        return koreanOrder.docs.map((doc) => doc.data());
-      };
-    
-      // 부족한 재료 갯수가 적은 순으로 정렬하는 함수
+// 부족한 재료 갯수가 적은 순으로 정렬하는 함수
 const refrigeratorOrderByLack = async (refrigeratorIngredients) => {
-    const lackOrder = await firestore().collection('recipe').get();
-  
-    const sortedRecipe = lackOrder.docs
-      .map((recipeDoc) => {
-        const recipeDocData = recipeDoc.data();
-        const lack = compareIngredients(refrigeratorIngredients, recipeDocData.recipe_ingredients);
-  
-        return {
-          recipeId: recipeDoc.recipeId,
-          lackCount: lack.length,
+  const lackOrder = await firestore().collection('recipe').get();
+
+  const sortedRecipe = lackOrder.docs
+    .map((recipeDoc) => {
+      const recipeDocData = recipeDoc.data();
+      const lack = compareIngredients(refrigeratorIngredients, recipeDocData.recipe_ingredients);
+
+      return {
+        recipeId: recipeDoc.recipeId,
+        lackCount: lack.length,
+      };
+    })
+    .sort((a, b) => a.lackCount - b.lackCount);
+
+  return sortedRecipe.map((recipeDocData) => ({
+    recipeId: recipeDocData.recipeId,
+    lackCount: recipeDocData.lackCount,
+  }));
+};
+
+
+const fetchedRecipes = [];
+const fetchRecipeData = async() => {
+
+  try {
+    const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
+
+    for (let i = 1; i <= 100; i++) {
+      const docName = i.toString();
+      const recipeRef = firestore().collection('recipes').doc(docName);
+      const recipeSnapshot = await recipeRef.get();
+
+      if (recipeSnapshot.exists) {
+        const recipeData = recipeSnapshot.data();
+        const recipeContents = {
+          id: docName,
+          name: recipeData.recipe_name,
+          image: recipeData.recipe_image,
+          time: recipeData.recipe_time,
         };
-      })
-      .sort((a, b) => a.lackCount - b.lackCount);
-  
-    return sortedRecipe.map((recipeDocData) => ({
-      recipeId: recipeDocData.recipeId,
-      lackCount: recipeDocData.lackCount,
-    }));
-  };
-
-  //이거 레시피포스트 가져오는 함수...?
-  const fetchRecipeData = async() => {
-
-    try {
-      const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
-      const fetchedRecipes = [];
-  
-      for (let i = 1; i <= 100; i++) {
-        const docName = i.toString();
-        const recipeRef = firestore().collection('recipes').doc(docName);
-        const recipeSnapshot = await recipeRef.get();
-  
-        if (recipeSnapshot.exists) {
-          const recipeData = recipeSnapshot.data();
-          const recipeContents = {
-            id: docName,
-            name: recipeData.recipe_name,
-            image: recipeData.recipe_image,
-            time: recipeData.recipe_time,
-          };
-          fetchedRecipes.push(recipeContents);
-        } else {
-          console.warn(`레시피 문서 "${docName}"을(를) 찾을 수 없습니다.`);
-        }
+        fetchedRecipes.push(recipeContents);
+      } else {
+        console.warn(`레시피 문서 "${docName}"을(를) 찾을 수 없습니다.`);
       }
-  
-      setRecipeData(fetchedRecipes);
+    }
+
+
+    setRecipeData(fetchedRecipes);
+  } catch (error) {
+    console.error('북마크 레시피를 가져오는데 실패했습니다.', error);
+  }
+};
+
+const displayLackingIngredients = async (recipeId, recipeIngredients) => {
+  const lackingIngredients = compareIngredients(refrigeratorIngredients, recipeIngredients);
+  if (lackingIngredients.length > 0){
+    try{
+      const lackId = await addLackToCollection({ recipeId, lackingIngredients });
+      console.log('Lack added with ID: ', lackId);
     } catch (error) {
-      console.error('북마크 레시피를 가져오는데 실패했습니다.', error);
+      console.error('Error adding lack: ', error);
     }
-  };
-
-  //searchQuery용 음식name
-  const fetchRecipeData2 = async() => {
-
-    try {
-      const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
-      const fetchedRecipes = [];
+  }
+  return lackingIngredients.join(', ');
+};
   
-      for (let i = 1; i <= 100; i++) {
-        const docName = i.toString();
-        const recipeRef = firestore().collection('recipes').doc(docName);
-        const recipeSnapshot = await recipeRef.get();
-  
-        if (recipeSnapshot.exists) {
-          const recipeData = recipeSnapshot.data();
-          const name = recipeData.recipe_name;
-          fetchedRecipes.push(name);
-        } else {
-          console.warn(`레시피 문서 "${docName}"을(를) 찾을 수 없습니다.`);
-        }
-      }
-  
-      setRecipeData(fetchedRecipes);
-    } catch (error) {
-      console.error('북마크 레시피를 가져오는데 실패했습니다.', error);
-    }
-  };
+const handleSortOrder = async (orderType) => {
+  switch (orderType) {
+    case 'korean':
+      const koreanOrder = await orderByKorean();
+      setRecipeData(koreanOrder);
+      break;
+    case 'lack':
+      const lackOrder = await refrigeratorOrderByLack(refrigeratorIngredients);
+      setRecipeData(lackOrder);
+      break;
+    default:
+      break;
+  }
+};
 
-  const displayLackingIngredients = async (recipeId, recipeIngredients) => {
-    const lackingIngredients = compareIngredients(refrigeratorIngredients, recipeIngredients);
-    if (lackingIngredients.length > 0){
-      try{
-        const lackId = await addLackToCollection({ recipeId, lackingIngredients });
-        console.log('Lack added with ID: ', lackId);
-      } catch (error) {
-        console.error('Error adding lack: ', error);
-      }
-    }
-    return lackingIngredients.join(', ');
-  };
-    
-
-
-      //조리가능순 버튼 (난이도 재활용)
-       const [star, setStar] = useState({
-        button1: false,
-        button2: false,
-      });
-    
-      const handleSmallButtonClick = (buttonName) => {
-        setStar((prevStates) => ({
-          ...prevStates,
-          [buttonName]: !prevStates[buttonName],
-        }));
-      }; 
-
-      //handleSortOrder() 변형함
-      const getImageForButton = async (buttonName) => {
-        if (star[buttonName]) {
-          switch (buttonName) {
-            case 'button2':
-              const koreanOrder = await orderByKorean();
-              setRecipeData(koreanOrder);
-              return require('../assets/icons/koreanOrder.png');
-            default:
-              const lackOrder = await refrigeratorOrderByLack(refrigeratorIngredients);
-              setRecipeData(lackOrder);
-              return require('../assets/icons/avail.png');
-          }
-        } 
-        else{
-          const lackOrder = await refrigeratorOrderByLack(refrigeratorIngredients);
-          setRecipeData(lackOrder);
-          return require('../assets/icons/avail.png');
-        }
-      };
-
-      const photoImage = () => {
-        if(item.image==''){
-          return require('../assets/icons/photoNotReady.png');
-        }
-        else{
-          return {uri: item.image};
-        }
-      };
-
-
+const photoImage = () => {
+  if(recipe.image==''){
+    return require('../assets/icons/photoNotReady.png');
+  }
+  else{
+    return {uri: recipe.image};
+  }
+};
 
  const [modalVisible, setModalVisible] = useState(false);
 
-
-{/* 검색 */}
-const [searchQuery, setSearchQuery] = useState('');
-  const allFood = [...fetchedRecipes];
-  const filteredData = searchQuery
-    ? allFood.filter(recipe =>
-        recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : allFood;
-
-  
 {/* 내 레시피만 보기 */}
 const [my, setMy] = useState({
     check: false,
@@ -192,8 +133,6 @@ const [my, setMy] = useState({
       ...prevStates,
       [buttonName]: !prevStates[buttonName],
     }));
-    setShowUserRecipes((prevStates) => !prevStates);
-
   }; 
 
   const getImageForCheckbox = (buttonName) => {
@@ -210,34 +149,99 @@ const [my, setMy] = useState({
     }
   };
 
+   {/* 조리가능순 버튼 (난이도 재활용)*/}
+   const [star, setStar] = useState({
+    button1: false,
+    button2: false,
+  });
 
-  const [book, setBook] = useState({
-    bookmarkFill: false,
-});
-
-const handleBookmarkClick = () => {
-    setBook((prevBook) => ({
-        ...prevBook,
-        bookmarkFill: !prevBook.bookmarkFill,
+  const handleSmallButtonClick = (buttonName) => {
+    setStar((prevStates) => ({
+      ...prevStates,
+      [buttonName]: !prevStates[buttonName],
     }));
-};
+  }; 
 
-const getImageForBookmark = () => {
-    return book.bookmarkFill 
-        ? require('../assets/icons/bookmark.png')
-        : require('../assets/icons/bookmarkFill.png');
-};
+  const getImageForButton = (buttonName) => {
+    if (star[buttonName]) {
+      switch (buttonName) {
+        case 'button2':
+          return require('../assets/icons/avail.png');
+        default:
+          return require('../assets/icons/koreanOrder.png');
+      }
+    } 
+    else{
+      return require('../assets/icons/koreanOrder.png');
+    }
+  };
+
+
+  {/* bookmark */}
+  const fetchBookmarkedRecipes = async () => {
+    try {
+      const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
+      const userDoc = await firestore().collection('users').doc(userId).get();
+      const userData = userDoc.data();
+      const bookmarkedRecipeIds = userData?.user_bookmark || [];
+      setBookmarkedRecipes(bookmarkedRecipeIds);
+    } catch (error) {
+      console.error('Error fetching bookmarked recipes:', error);
+    }
+  };
+
+  const toggleBookmark = async (recipeId, newBookmarkStatus) => {
+    try {
+      const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
+      const userBookmarkRef = firestore().collection('users').doc(userId);
+      const userBookmarkSnapshot = await userBookmarkRef.get();
+      const userData = userBookmarkSnapshot.data();
+      let updatedBookmarks = userData?.user_bookmark || [];
+
+      if (newBookmarkStatus && !updatedBookmarks.includes(recipeId)) {
+        updatedBookmarks.push(recipeId);
+      } else if (!newBookmarkStatus && updatedBookmarks.includes(recipeId)) {
+        updatedBookmarks = updatedBookmarks.filter(id => id !== recipeId);
+      }
+
+      await userBookmarkRef.update({ user_bookmark: updatedBookmarks });
+      setBookmarkedRecipes(updatedBookmarks);
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
+
+  const isBookmarked = (recipeId) => {
+    return bookmarkedRecipes.includes(recipeId);
+  };
+
+  const handleToggleBookmark = async (recipeId) => {
+    const newBookmarkStatus = !isBookmarked(recipeId);
+    toggleBookmark(recipeId, newBookmarkStatus);
+  };
 
   return (
     <View style={styles.container}>
- <View>
-    <View style={{ left: 40, top: 20, width: 310, height: 48, paddingVertical: 8, paddingHorizontal: 40, backgroundColor: 'white', borderRadius: 15, justifyContent: 'center', flexDirection: 'column', }}>
-        <TextInput style={{ borderWidth: 0, top: 16, width: 300, height: 20, left: 10, color: '#9C9C9C', fontSize: 14, fontFamily: 'NanumGothic', flexWrap: 'wrap',  }} placeholder="검색" onChangeText={setSearchQuery}
-value={searchQuery} keyboardType="default"/>
- {/* 돋보기 */}
-  <Image style={{position: 'absolute', marginLeft: 16}} source={require('../assets/icons/search.png')}/>
+      <View style = {styles.searchArea}>
+        <View style = {styles.searchWrapper}>
+          
+          <TextInput
+            style={{  width: '100%', height: '100%', 
+            color: 'black', fontSize: 14, fontFamily: 'NanumGothic',
+            backgroundColor: 'white', textAlign: 'center', borderRadius: 13 }}
+            placeholder="검색"
+            onChangeText={(text) => setSearchQuery(text)}
+            value={searchQuery}
+            keyboardType="default"
+          />
+          <View style = {styles.searchImg}>
+            <Image source={require('./assets/icons/search.png')}/>
+          </View>
+        </View>
+      </View>
       
-  <View style={{flexDirection: 'row', top: 48, right: 55, gap: 4}}>
+      {/* 내 레시피만 보기 */}
+<View style={{flexDirection: 'row', marginTop: 10, gap: 4, marginLeft: 10}}>
   {/* 레시피 도움말 i버튼 */}
   <TouchableOpacity
         style={styles.infoBtn}
@@ -247,78 +251,111 @@ value={searchQuery} keyboardType="default"/>
         <Text style={{ fontSize: 10}}>
           내가 만든 레시피만 보기
         </Text>
-    <TouchableOpacity onPress={() => handleCheckboxClick('checkFill')}
-            value={showUserRecipes}>
+    <TouchableOpacity onPress={() => handleCheckboxClick('checkFill')}>
         <Image source={getImageForCheckbox('checkFill')}/>
     </TouchableOpacity>
-    
-  </View>
-  
 
-  {/* 조리가능 순 */}
-<TouchableOpacity onPress={() => handleSmallButtonClick('button2')} style={{ border: 'none', backgroundColor: 'transparent', left: 180, top: 33 }}>
+      {/* 조리가능 순 */}
+<TouchableOpacity onPress={() => handleSmallButtonClick('button2')} style={{ border: 'none', backgroundColor: 'transparent', left: 120, }}>
           <Image source={getImageForButton('button2')}/>
         </TouchableOpacity>
-      </View>
-
-  {/* 동그라미 추가 버튼 */}
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddRecipeMain')}>
-      <Text style={{color: 'white', textAlign: 'center', fontSize: 47, bottom: 7, }}>+</Text>
-        </TouchableOpacity>
-</View>
-
-    <ScrollView style={styles.containerScroll}>
-      <View style={{ alignItems: 'center', }}>
-  {/* 레시피 포스트 컴포넌트 */}
-  {recipeData.map((recipe) => (
-      <View key={recipe.id}>
-  <FlatList
-        data={filteredData}
-        keyExtractor={(recipe) => recipe.name}
-        renderItem={({ recipe }) => (
-            
-      <TouchableOpacity key={recipe}
-        style={styles.post}
-        onPress={() => navigation.navigate('RecipeMain', { recipeId: recipe.id })}>
-         <Image source={photoImage()}  
-      style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7,  backgroundColor: '#ccc'}} 
-        />
-        <Text style={styles.foodText}>{item.food}</Text>
-        <View style={{left: 12, top: 15}}>
-
-    <TouchableOpacity style={{position: 'absolute', left: 110, bottom: 23}} key={index} onPress={handleBookmarkClick}>
-        <Image source={getImageForBookmark()} />
-    </TouchableOpacity>
-        
-        <View
-        style={{borderWidth: 1.5,
-    borderColor: 'red',
-    borderRadius: 50,
-    width: 13,
-    height: 13, top: 6}}>
-        <Text style={{color: 'red',
-    textAlign: 'center',
-    textWeight: 'bold', fontSize: 9}}>i</Text>
-      </View>
-        <Text style={styles.lackingText}>{item.lacking}{item.lackMore} 부족</Text>
-        </View>
-         
-        <View style={{left: 7, flexDirection: 'row'}}>
-        {/*<Text style={styles.timeText}>{props.hour} 시간</Text>*/}
-        <Image style={{top: 15, marginLeft: 4}} source={require('../assets/icons/clock.png')}/>
-        <Text style={styles.timeText}>{item.min}분 이내</Text>
-        </View>
-      </TouchableOpacity>
-      )} 
-        numColumns={2} 
-      />
-            </View>
-      ))}
+    
   </View>
-  
-    </ScrollView>
 
-  {/* 레시피 도움말 모달 */}
+
+
+      <ScrollView style={styles.containerScroll}>
+        <View style={styles.row}>
+          {/* Recipe list */}
+          {filteredData.map((recipe) => (
+            <TouchableOpacity
+              key={recipe.id}
+              style={styles.post}
+              onPress={() => navigation.navigate('RecipeMain', { recipeId: recipe.id })}>
+              <View style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7, backgroundColor: '#ccc', alignItems: 'center', justifyContent: 'center'}}>
+         <View style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7, backgroundColor: '#ccc', alignItems: 'center', justifyContent: 'center'}}>
+         <Image source={photoImage()} //source={item.img}
+      style={{width: 120, height: 60, }} 
+        />
+        </View>
+        </View>
+              <Text style={styles.foodText}>{recipe.name}</Text>
+              <View style={{ left: 12, top: 15 }}>
+              </View>
+        <View style={{marginLeft: 7, flexDirection: 'row'}}>
+          <Image style={{top: 15, marginLeft: 4}} source={require('../assets/icons/clock.png')}/>
+              <Text style={styles.timeText}>
+              {recipe.time[0] !== 0 && `${recipe.time[0]} 시간 `}
+              {recipe.time[1] !== 0 && `${recipe.time[1]} 분`} 이내
+            </Text>
+        </View>
+        <TouchableOpacity
+              onPress={() => handleToggleBookmark(recipe.id)}
+              style={[styles.bookmarkButton, { backgroundColor: isBookmarked(recipe.id) ? 'yellow' : 'white' }]}>
+              <Text>{isBookmarked(recipe.id) ? 'Bookmarked' : 'Bookmark'}</Text>
+            </TouchableOpacity>
+
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    
+      {/* Filtering and Sorting Controls */}
+      <View style={styles.controls}>
+        <View style={styles.filterSwitchContainer}>
+          <Text>Show User Recipes</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={showUserRecipes ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={handleToggleSwitch}
+            value={showUserRecipes}
+          />
+        </View>
+        <TouchableOpacity style={styles.addButton} onPress={fetchRecipeData}>
+          <Text style={styles.addButtonText}>Add Recipe</Text>
+        </TouchableOpacity>
+        <View style={styles.sortButtons}>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('korean')}>
+            <Text>Sort by Korean</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('lack')}>
+            <Text>Sort by Lack</Text>
+          </TouchableOpacity>
+          {/* Add more sorting buttons as needed */}
+      </View>
+    </View>
+
+
+
+      {/* Filtering and Sorting Controls */}
+      <View style={styles.controls}>
+        <View style={styles.filterSwitchContainer}>
+          <Text>Show User Recipes</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={showUserRecipes ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={handleToggleSwitch}
+            value={showUserRecipes}
+          />
+        </View>
+        <TouchableOpacity style={styles.addButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.addButtonText}>Add Recipe</Text> 
+        </TouchableOpacity>
+        <View style={styles.sortButtons}>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('korean')}>
+            <Text>Sort by Korean</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('lack')}>
+            <Text>Sort by Lack</Text>
+          </TouchableOpacity>
+          {/* Add more sorting buttons as needed */}
+        </View>
+      </View>
+
+
+        {/* 레시피 도움말 모달 */}
 <Modal
         animationType="slide"
         transparent={true}
@@ -344,8 +381,8 @@ value={searchQuery} keyboardType="default"/>
   <Text style={{fontSize: 12,}}>으로, 조리 가능한 레시피 목록과 부족한 재료의 개수를 볼 수 있습니다. </Text>
 
 <View style={{justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-  <Image style={{marginTop: 10}} source={require('../assets/icons/avail.png')}/>
   <Image style={{marginTop: 10}} source={require('../assets/icons/koreanOrder.png')}/>
+  <Image style={{marginTop: 10}} source={require('../assets/icons/avail.png')}/>
 </View>
 
    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
@@ -390,37 +427,42 @@ value={searchQuery} keyboardType="default"/>
         </View>
       </Modal>
     </View>
-  );
+  )
 };
 
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#F8F9FA', 
-    width: '100%',
-    height: '100%',
+    container: {
+    backgroundColor: '#F8F9FA', // 배경색상 추가
+    height: 'auto',
   },
   containerScroll: {
-    top: 60,
-    backgroundColor: '#F8F9FA',
+    top: 90,
+    backgroundColor: '#F8F9FA', // 배경색상 추가
+    height: 'auto',
+  marginBottom: 170,
+  },
+  cont: {
+    flexDirections: 'row',
+    justifyContent: 'center',
+    felxWrap: 'wrap',
   },
   post: {
-    margin: 10,
     position: 'relative',
-    width: 155,
-    height: 165,
+    width: 141,
+    height: 154,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingVertical: 3,
     alignContent: 'flex-start',
     shadowColor: "#000000",
     shadowOffset: {
-      width: 5,
-      height: 5,
+      width: 10,
+      height: 10,
     },
     shadowOpacity: 0.25,
     shadowRadius: 10,
-    elevation: 10
+    elevation: 5,
   },
   foodText: {
     top: 14,
@@ -428,37 +470,54 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   lackingText: {
-    paddingLeft: 16,
+    paddingLeft: 2,
     bottom: 7,
     color: '#E50000',
     fontSize: 10,
     fontFamily: 'NanumGothic',
   },
   timeText: {
+    paddingLeft: 10,
     top: 10,
     color: '#000',
     fontSize: 12,
     margin: 5,
     fontFamily: 'NanumGothic',
   },
-
-  addButton:{
-    width:55,
-    height:55,
-    borderRadius: 50,
-    position: 'absolute',
-    right: 30,
-    bottom: 80,
-    zIndex: 2,
-    backgroundColor: '#FEA655',
-    shadowColor: "#000000",
-    shadowOffset: {
-      width: 5,
-      height: 5,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10
+  row: {
+    flexDirection: 'row', 
+    display:'flex',
+    flexWrap:'wrap',
+    justifyContent: 'space-around', 
+    position: 'relative', 
+    paddingHorizontal: 40, 
+    paddingBottom: 80, 
+    gap: 20,
+  
+  },
+  searchWrapper:{
+    width: 299,
+    height: 48,
+    borderRadius: 15,  
+    display: 'flex',
+    flexDirection:'row'
+  },
+  searchArea:{
+    width: '100%',
+    height: 48,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems:'center',
+    marginTop: 11
+  },
+  searchImg:{
+    width: 60,
+    height: '100%',
+    display: 'flex',
+    alignItems:'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    position: 'absolute'
   },
   centeredView: {
     flex: 1,
@@ -490,12 +549,18 @@ const styles = StyleSheet.create({
     height: 15,
     marginHorizontal: 5
   },
-
   infoTxt: {
     color: 'red',
     textAlign: 'center',
     textWeight: 'bold',
     bottom: 1,
+  },
+  bookmarkButton: {
+    marginTop: 5,
+    padding: 5,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: 'black',
   },
 });
 
