@@ -168,11 +168,11 @@ const [my, setMy] = useState({
         case 'button2':
           return require('../assets/icons/avail.png');
         default:
-          return require('../assets/icons/koreanOrder.png');
+          return require('../assets/icons/recommend.png');
       }
     } 
     else{
-      return require('../assets/icons/koreanOrder.png');
+      return require('../assets/icons/recommend.png');
     }
   };
 
@@ -235,7 +235,7 @@ const [my, setMy] = useState({
             keyboardType="default"
           />
           <View style = {styles.searchImg}>
-            <Image source={require('./assets/icons/search.png')}/>
+            <Image source={require('../assets/icons/search.png')}/>
           </View>
         </View>
       </View>
@@ -385,7 +385,7 @@ const [my, setMy] = useState({
   <Text style={{fontSize: 12,}}>으로, 조리 가능한 레시피 목록과 부족한 재료의 개수를 볼 수 있습니다. </Text>
 
 <View style={{justifyContent: 'center', flexDirection: 'row', gap: 5}}>
-  <Image style={{marginTop: 10}} source={require('../assets/icons/koreanOrder.png')}/>
+  <Image style={{marginTop: 10}} source={require('../assets/icons/recommend.png')}/>
   <Image style={{marginTop: 10}} source={require('../assets/icons/avail.png')}/>
 </View>
 
