@@ -35,9 +35,11 @@ const BookMarkItem = ({ item, navigation }) => {
             style={styles.post}
             onPress={() => navigation.navigate('RecipeDetail', { recipeId: item.id })}>
                 <View style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7, backgroundColor: '#ccc', alignItems: 'center', justifyContent: 'center'}}>
+         <View style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7, backgroundColor: '#ccc', alignItems: 'center', justifyContent: 'center'}}>
          <Image source={photoImage()} //source={item.img}
       style={{width: 120, height: 60, }} 
         />
+        </View>
         </View>
                 <Text style={styles.foodText}>{item.name}</Text>
                 <View style={{ left: 12, top: 15 }}>
