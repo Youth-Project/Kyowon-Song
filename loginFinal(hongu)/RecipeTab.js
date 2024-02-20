@@ -261,7 +261,11 @@ const [my, setMy] = useState({
         </TouchableOpacity>
     
   </View>
-
+  {/* 동그라미 추가 버튼 */}
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddRecipeMain')}>
+      <Text style={{color: 'white', textAlign: 'center', fontSize: 47, bottom: 7, }}>+</Text>
+        </TouchableOpacity>  
+        
 
 
       <ScrollView style={styles.containerScroll}>
@@ -463,6 +467,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 5,
+  },
+  addButton:{
+    width:55,
+    height:55,
+    borderRadius: 50,
+    top: 630,
+    position: 'absolute',
+    right: 30,
+    zIndex: 2,
+    backgroundColor: '#FEA655',
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 10
   },
   foodText: {
     top: 14,
