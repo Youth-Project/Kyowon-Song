@@ -21,11 +21,11 @@ const BookMarkItem = ({ item, navigation }) => {
     };
 
     const photoImage = () => {
-        if(item.image==''){
+        if(recipe.image==''){
           return require('../assets/icons/photoNotReady.png');
         }
         else{
-          return {uri: item.image};
+          return {uri: recipe.image};
         }
       };
 
