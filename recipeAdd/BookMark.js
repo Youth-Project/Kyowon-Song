@@ -32,13 +32,13 @@ const [book, setBook] = useState({
     if (book[buttonName]) {
       switch (buttonName) {
         case 'bookmarkFill':
-          return require('./assets/icons/bookmarkFill.png');
+          return require('../assets/icons/bookmarkFill.png');
         default:
-          return require('./assets/icons/bookmark.png');
+          return require('../assets/icons/bookmark.png');
       }
     } 
     else{
-      return require('./assets/icons/bookmark.png');
+      return require('../assets/icons/bookmark.png');
     }
   };
 
@@ -80,7 +80,7 @@ const [book, setBook] = useState({
          
         <View style={{left: 7, flexDirection: 'row'}}>
         {/*<Text style={styles.timeText}>{props.hour} 시간</Text>*/}
-        <Image style={{top: 15, marginLeft: 4}} source={require('./assets/icons/clock.png')}/>
+        <Image style={{top: 15, marginLeft: 4}} source={require('../assets/icons/clock.png')}/>
         <Text style={styles.timeText}>{item.min} 분 이내</Text>
         </View>
       </TouchableOpacity>
