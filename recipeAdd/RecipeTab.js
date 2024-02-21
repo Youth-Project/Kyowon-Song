@@ -1,34 +1,147 @@
-{/* 부족한 부분: 항목이 채워진 조건하에 버튼이 채워지게, 조리시간 & 별컴 db연결, 요리이름 인풋창 한쪽으로만 늘어나게하기, 사진추가 누르면 갤러리연동 */}
-{/* 전체 맵 안에 포로 url 재료 map 조리시간 array, 난이도 , 과정 array */}
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, TextInput, StyleSheet, Modal, Image, FlatList,  } from 'react-native';
+import React, { useState, useEffect, } from 'react';
+import { View, Text, TouchableOpacity , StyleSheet, TextInput, Modal, ScrollView,Switch,Image} from 'react-native';
+import firestore from "@react-native-firebase/firestore";
+import { CurrentRenderContext } from '@react-navigation/native';
+import BookmarkFill from '../assets/icons/bookmarkFill.png';
+import Bookmark from '../assets/icons/bookmark.png';
 
-const ColorButton = ({ color, onPress, selected }) => {
-  return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: color, opacity: selected ? 0.5 : 1 }]}
-      onPress={onPress}>
-      <Text style={styles.buttonText}>{color}</Text>
-    </TouchableOpacity>
-  );
+const RecipeTab = ({navigation}) => {
+  const [showUserRecipes, setShowUserRecipes] = useState(false);
+  const [recipeData, setRecipeData] = useState([]);
+  const [refrigeratorIngredients, setRefrigeratorIngredients] = useState([]);
+  const [bookmarkedRecipes, setBookmarkedRecipes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+    // Filtering recipes based on the search query
+    const filteredData = recipeData.filter((recipe) =>
+      recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  useEffect(() => {
+    fetchRecipeData();
+    fetchBookmarkedRecipes();
+  }, []);
+
+const handleToggleSwitch = () => {
+  setShowUserRecipes((prev) => !prev);
 };
 
-const AddRecipeMain = ({navigation}) => {
-  const [name, onChangeName] = useState('');
-  const [hour, setHour] = useState('');
-  const [min, setMin] = useState('');
-  const [ingred, setIngred] = useState('');
-  const [amount, setAmount] = useState('');
-  const [cookingTime, setCookingTime] = useState('');
+const orderByKorean = async () => {
+  const koreanOrder = await firestore().collection('recipe').orderBy('recipeName').get();
+  return koreanOrder.docs.map((doc) => doc.data());
+};
 
-  const [modalVisible, setModalVisible] = useState(false);
+// 부족한 재료 갯수가 적은 순으로 정렬하는 함수
+const refrigeratorOrderByLack = async (refrigeratorIngredients) => {
+  const lackOrder = await firestore().collection('recipe').get();
+
+  const sortedRecipe = lackOrder.docs
+    .map((recipeDoc) => {
+      const recipeDocData = recipeDoc.data();
+      const lack = compareIngredients(refrigeratorIngredients, recipeDocData.recipe_ingredients);
+
+      return {
+        recipeId: recipeDoc.recipeId,
+        lackCount: lack.length,
+      };
+    })
+    .sort((a, b) => a.lackCount - b.lackCount);
+
+  return sortedRecipe.map((recipeDocData) => ({
+    recipeId: recipeDocData.recipeId,
+    lackCount: recipeDocData.lackCount,
+  }));
+};
 
 
-{/* 별컴포넌트 */}
-  const [star, setStar] = useState({
+const fetchedRecipes = [];
+const fetchRecipeData = async () => {
+  try {
+    const snapshot = await firestore().collection('recipes').get();
+    snapshot.forEach((doc) => {
+      const recipeData = doc.data();
+      fetchedRecipes.push({
+        id: doc.id,
+        name: recipeData.recipe_name,
+        image: recipeData.recipe_image,
+        time: recipeData.recipe_time,
+      });
+    });
+    setRecipeData(fetchedRecipes);
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+  }
+};
+
+const displayLackingIngredients = async (recipeId, recipeIngredients) => {
+  const lackingIngredients = compareIngredients(refrigeratorIngredients, recipeIngredients);
+  if (lackingIngredients.length > 0){
+    try{
+      const lackId = await addLackToCollection({ recipeId, lackingIngredients });
+      console.log('Lack added with ID: ', lackId);
+    } catch (error) {
+      console.error('Error adding lack: ', error);
+    }
+  }
+  return lackingIngredients.join(', ');
+};
+  
+const handleSortOrder = async (orderType) => {
+  switch (orderType) {
+    case 'korean':
+      const koreanOrder = await orderByKorean();
+      setRecipeData(koreanOrder);
+      break;
+    case 'lack':
+      const lackOrder = await refrigeratorOrderByLack(refrigeratorIngredients);
+      setRecipeData(lackOrder);
+      break;
+    default:
+      break;
+  }
+};
+
+const photoImage = () => {
+  if(recipe.image==''){
+    return require('../assets/icons/photoNotReady.png');
+  }
+  else{
+    return {uri: recipe.image};
+  }
+};
+
+ const [modalVisible, setModalVisible] = useState(false);
+
+{/* 내 레시피만 보기 */}
+const [my, setMy] = useState({
+    check: false,
+    checkFill: false,
+  });
+
+  const handleCheckboxClick = (buttonName) => {
+    setMy((prevStates) => ({
+      ...prevStates,
+      [buttonName]: !prevStates[buttonName],
+    }));
+  }; 
+
+  const getImageForCheckbox = (buttonName) => {
+    if (my[buttonName]) {
+      switch (buttonName) {
+        case 'checkFill':
+          return require('../assets/icons/checkFill.png');
+        default:
+          return require('../assets/icons/check.png');
+      }
+    } 
+    else{
+      return require('../assets/icons/check.png');
+    }
+  };
+
+   {/* 조리가능순 버튼 (난이도 재활용)*/}
+   const [star, setStar] = useState({
     button1: false,
     button2: false,
-    button3: false,
   });
 
   const handleSmallButtonClick = (buttonName) => {
@@ -38,426 +151,382 @@ const AddRecipeMain = ({navigation}) => {
     }));
   }; 
 
-  let recipe_difficulty = 1;
-
   const getImageForButton = (buttonName) => {
     if (star[buttonName]) {
-      // 작은 버튼이 눌렸을 때의 이미지 경로
       switch (buttonName) {
         case 'button2':
-          recipe_difficulty = 2;
-          return require('./assets/star2.png');
-        case 'button3':
-          recipe_difficulty = 3;
-          return require('./assets/star3.png');
+          return require('../assets/icons/recommend.png');
         default:
-          recipe_difficulty = 1
-          return require('./assets/star1.png');
+          return require('../assets/icons/koreanOrder.png');
       }
     } 
-  };
-
-{/* 조리시간 업뎃 */}
-  const updateCookingTime = () => {
-  const hasHour = hour && hour !== '0';
-  const hasMinute = min && min !== '0';
-
-  if (hasHour || hasMinute) {
-    const newCookingTime = `${hasHour ? hour + '시간' : ''} ${hasMinute ? min + '분' : ''}`;
-    setCookingTime(newCookingTime);
-  } else {
-    setCookingTime('조리시간');
-  }
-
-  setModalVisible(false);
-};
-
-
-{/* 재료업뎃 모달 예시 */}
-  const [data, setData] = useState([]);
-
-  const openModal = () => {
-    setModal2Visible(true)
-    // 모달 열릴 때마다 입력값 초기화
-    setIngred('');
-    setAmount('');
-  };
-
-
-    const handleAddItem = () => {
-    if (ingred.trim() !== '' && amount.trim() !== '') {
-      setData((prevData) => [...prevData, `${ingred}       ${amount}`]);
-      setIngred('');
-      setAmount('');
-      
+    else{
+      return require('../assets/icons/koreanOrder.png');
     }
-    setModal2Visible(false);
   };
 
 
-    const [modal2Visible, setModal2Visible] = useState(false);
+  {/* bookmark */}
+  const fetchBookmarkedRecipes = async () => {
+    try {
+      const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
+      const userDoc = await firestore().collection('users').doc(userId).get();
+      const userData = userDoc.data();
+      const bookmarkedRecipeIds = userData?.user_bookmark || [];
+      setBookmarkedRecipes(bookmarkedRecipeIds);
+    } catch (error) {
+      console.error('Error fetching bookmarked recipes:', error);
+    }
+  };
 
-  const [modal3Visible, setModal3Visible] = useState(false);
+  const toggleBookmark = async (recipeId, newBookmarkStatus) => {
+    try {
+      const userId = 'xxvkRzKqFcWLVx4hWCM8GgQf1hE3';
+      const userBookmarkRef = firestore().collection('users').doc(userId);
+      const userBookmarkSnapshot = await userBookmarkRef.get();
+      const userData = userBookmarkSnapshot.data();
+      let updatedBookmarks = userData?.user_bookmark || [];
 
-const handlePhoto = () => {
-    setModal3Visible(false);
+      if (newBookmarkStatus && !updatedBookmarks.includes(recipeId)) {
+        updatedBookmarks.push(recipeId);
+      } else if (!newBookmarkStatus && updatedBookmarks.includes(recipeId)) {
+        updatedBookmarks = updatedBookmarks.filter(id => id !== recipeId);
+      }
+
+      await userBookmarkRef.update({ user_bookmark: updatedBookmarks });
+      setBookmarkedRecipes(updatedBookmarks);
+    } catch (error) {
+      console.error('Error toggling bookmark:', error);
+    }
+  };
+
+  const isBookmarked = (recipeId) => {
+    return bookmarkedRecipes.includes(recipeId);
+  };
+
+  const handleToggleBookmark = async (recipeId) => {
+    const newBookmarkStatus = !isBookmarked(recipeId);
+    toggleBookmark(recipeId, newBookmarkStatus);
   };
 
   return (
     <View style={styles.container}>
-    {/* 요리시간 팝업 */}
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
-        setModalVisible(!modalVisible);
-      }}>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={{fontSize: 15,bottom: 20,right: 85,}}>요리 소요 시간</Text>
-
-      <View style={{flexDirection: 'row', marginTop: 8 }}>
-      <TextInput
-            style={{fontSize: 15,
-            borderWidth: 0.5,
-            height: 38,
-            width: 55,
-            right: 30,
-            color: '#878787',
-            textAlign: 'center',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth:0,
-            paddingTop: 6,
-            marginLeft: 5}}
-            placeholder="0" 
-            keyboardType="numeric"
-
-value={hour}
-            onChangeText={(text) => setHour(text)}
-            />
-          <Text style={{ right: 16,fontSize: 15,top: 12,}}>시간</Text>
-
+      <View style = {styles.searchArea}>
+        <View style = {styles.searchWrapper}>
+          
           <TextInput
-            style={{fontSize: 15,
-            borderWidth: 0.5,
-            height: 38,
-            width: 55,
-            left: 4,
-            color: '#878787',
-            textAlign: 'center',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth:0,
-            paddingTop: 6,
-            marginLeft: 5}}
-            placeholder="0" 
-            keyboardType="numeric" 
-            
-value={min}
-
-onChangeText={(text) => setMin(text)}
-            />
-          <Text style={{ left: 20,fontSize: 15,top: 12,}} >분</Text>
+            style={{  width: '100%', height: '100%', 
+            color: 'black', fontSize: 14, fontFamily: 'NanumGothic',
+            backgroundColor: 'white', textAlign: 'center', borderRadius: 13 }}
+            placeholder="검색"
+            onChangeText={(text) => setSearchQuery(text)}
+            value={searchQuery}
+            keyboardType="default"
+          />
+          <View style = {styles.searchImg}>
+            <Image source={require('../assets/icons/search.png')}/>
           </View>
-            
-      <TouchableOpacity
-        style={styles.modButton}
-        onPress={updateCookingTime}
->
-        <Text style={styles.modButtonText}>완료</Text>
-      </TouchableOpacity>
-              
+        </View>
       </View>
-     </View>
-    </Modal>
-
-{/* 냉장고 예시 모달 */}
-<Modal
-      animationType="slide"
-      transparent={true}
-      visible={modal2Visible}
-      onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
-        setModalVisible(!modal2Visible);
-      }}>
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={{fontSize: 15,bottom: 20,right: 85,}}>재료 입력하기</Text>
-
-      <View style={{flexDirection: 'row', marginTop: 8, marginLeft: 16 }}>
-
-      <Text style={{ right: 16,fontSize: 15,top: 12,}}>재료명: </Text>
-      <TextInput
-
-            style={{fontSize: 15,
-            borderWidth: 0.5,
-            height: 38,
-            width: 55,
-            right: 30,
-            color: '#878787',
-            textAlign: 'center',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth:0,
-            paddingTop: 6,
-            marginLeft: 15}}
-            placeholder="감자" 
-            value={ingred} 
-
-            onChangeText={(text) => setIngred(text)}
-            />
-          <Text style={{ marginLeft: 7, right: 10, fontSize: 15,top: 12,}}>재료 양: </Text>
-          <TextInput
-            style={{fontSize: 15,
-            borderWidth: 0.5,
-            height: 38,
-            width: 55,
-            color: '#878787',
-            textAlign: 'center',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth:0,
-            paddingTop: 6,}}
-            placeholder="5개" 
-            
-value={amount}
-
-onChangeText={(text) => setAmount(text)}
-            />
-          </View>
-            
-      <TouchableOpacity
-        style={styles.modButton}
-        onPress={handleAddItem}
->
-        <Text style={styles.modButtonText}>추가하기</Text>
+      
+      {/* 내 레시피만 보기 */}
+<View style={{flexDirection: 'row', marginTop: 10, gap: 4, marginLeft: 10}}>
+  {/* 레시피 도움말 i버튼 */}
+  <TouchableOpacity
+        style={styles.infoBtn}
+        onPress={() => setModalVisible(true)}>
+        <Text style={styles.infoTxt}>i</Text>
       </TouchableOpacity>
-              
-      </View>
-     </View>
-    </Modal>
-
-{/* 사진추가 모달 */}
-<Modal
-      animationType="slide"
-      transparent={true}
-      visible={modal3Visible}
-      onRequestClose={() => {
-        Alert.alert('Modal has been closed.');
-        setModal3Visible(!modal3Visible);
-      }}>
-  <TouchableOpacity onPress={handlePhoto} style={{width: '100%', height: '100%'}}>
-      <View style={styles.centeredViewPhoto}>
-        <View style={styles.modalViewPhoto}>
-      <TouchableOpacity>
-          <Text style={{fontSize: 15, paddingVertical: 10}}>카메라로 촬영하기</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-          <Text style={{fontSize: 15, paddingVertical: 10}}>사진 선택하기</Text>
-      </TouchableOpacity>
-      </View>
-     </View>
-     </TouchableOpacity>
-    </Modal>
-
-
-
-{/* 사진추가 */}
-    <TouchableOpacity
-        style={{top: 35,
-    marginBottom: 20, 
-    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} onPress={() => setModal3Visible(true)}>
-    <Image source={require('./assets/addPhoto.png')}/>
+        <Text style={{ fontSize: 10}}>
+          내가 만든 레시피만 보기
+        </Text>
+    <TouchableOpacity onPress={() => handleCheckboxClick('checkFill')}>
+        <Image source={getImageForCheckbox('checkFill')}/>
     </TouchableOpacity>
 
-{/*<ScrollView style={{top: 100, height: 'auto'}}> */}
-
-{/*텍스트박스 어떻게 한쪽으로만 늘어나게하지 */}
-      <TextInput
-        style={{
-          top: 190, right: 130, 
-          fontSize: 20, 
-        backgroundColor: '#FFFFFF',
-        
-        borderRadius: 10,
-        paddingLeft: 6, paddingRight: 6, paddingTop: 7, paddingBottom: 7, 
-        marginBottom: 17, textDecorationLine: 'underline', textDecorationColor: '#FEA655', 
-          }}
-        onChangeText={onChangeName}
-        value={name}
-        placeholder="요리이름"
-      />
+      {/* 조리가능 순 */}
+<TouchableOpacity onPress={() => handleSmallButtonClick('button2')} style={{ border: 'none', backgroundColor: 'transparent', left: 120, }}>
+          <Image source={getImageForButton('button2')}/>
+        </TouchableOpacity>
     
-{/* 필요한 재료 */}
-<TouchableOpacity
-        style={{ right: 62, top: 190,
-        backgroundColor: '#FFFFFF',
-    paddingVertical: 5,
-    width: 215,
-    height: 330,
-    borderRadius: 10, }}
-        onPress={openModal}
-        >
-        <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' }} source={require('./assets/bowl.png')}/>
-        <View style={{alignItems: 'center', textAlign: 'center', width: 215,
-    height: 'auto', 
-    top: 22,
-    marginBottom: 20 }}>
-        <FlatList
-            data={data}
-            renderItem={({ item }) => 
-            <Text style={{color: '#000',
-        fontSize: 14, marginVertical: 2, }}>{item}</Text>
-  }
-            keyExtractor={(item, index) => index.toString()}
+  </View>
+  {/* 동그라미 추가 버튼 */}
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddRecipeMain')}>
+        <Text style={{color: 'white', textAlign: 'center', fontSize: 47, bottom: 7, }}>+</Text>
+      </TouchableOpacity>  
+        
+
+
+      <ScrollView style={styles.containerScroll}>
+        <View style={styles.row}>
+          {/* Recipe list */}
+          {filteredData.map((recipe) => (
+            <TouchableOpacity
+              key={recipe.id}
+              style={styles.post}
+              onPress={() => navigation.navigate('RecipeMain', { recipeId: recipe.id })}>
+         <View style={{width: 132, height: 70, left: 12, top: 9, borderRadius: 7, backgroundColor: '#ccc', alignItems: 'center', justifyContent: 'center'}}>
+         <Image
+          source={{ uri: recipe.image }}
+          defaultSource={require('../assets/icons/photoNotReady.png')}
+          style={{ width: 120, height: 60 }}
+        />
+        </View>
+              <Text style={styles.foodText}>{recipe.name}</Text>
+              <View style={{ left: 12, top: 15 }}>
+              </View>
+        <View style={{marginLeft: 7, flexDirection: 'row', top: 13}}>
+          <Image style={{top: 15, marginLeft: 4}} source={require('../assets/icons/clock.png')}/>
+              <Text style={styles.timeText}>
+              {recipe.time[0] !== 0 && `${recipe.time[0]}시간 `}
+              {recipe.time[1] !== 0 && `${recipe.time[1]}분`} 이내
+            </Text>
+        </View>
+        <TouchableOpacity
+              onPress={() => handleToggleBookmark(recipe.id)}
+              style={[styles.bookmarkButton, { backgroundColor: isBookmarked(recipe.id) ? 'yellow' : 'white' }]}>
+              <Text>{isBookmarked(recipe.id) ? BookmarkFill : Bookmark}</Text>
+            </TouchableOpacity>
+
+            </TouchableOpacity>
+          ))}
+        </View>
+      </ScrollView>
+    
+      {/* Filtering and Sorting Controls */}
+      <View style={styles.controls}>
+        <View style={styles.filterSwitchContainer}>
+          <Text>Show User Recipes</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={showUserRecipes ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={handleToggleSwitch}
+            value={showUserRecipes}
           />
-          </View>
-        <Text style={{
-          top: 150,
-          color: '#9C9C9C', 
-        fontSize: 12, 
-        textAlign: 'center',
-        }}>필요한 재료</Text>
-
-      </TouchableOpacity>
-
-  {/*    <View
-        style={{ right: 62, top: 190,
-        backgroundColor: '#FFFFFF',
-    paddingVertical: 20,
-    width: 215,
-    height: 330,
-    borderRadius: 10, 
-    }}>
-    <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' , }} source={require('./assets/bowl.png')}/>
-
-
-<ScrollView style={{
-    width: 215,
-    height: 'auto', 
-    top: 20,
-    marginBottom: 20
-    }}>
-  <View style={{flextDirection: 'row',  }}>
-  <View style={{ 
-    marginHorizontal: 2,
-    right: 40,
-    alignItems: 'center',
-    top: 2,
-    }}>
-    <Text style={{color: '#000', marginHorizontal: 2,
-        fontSize: 14, }}>
-        까나리액젓
-    </Text>     
-  </View>
- <View style={{ left: 47, alignItems: 'center',
-    }}>
-    <Text style={{ color: '#000', marginHorizontal: 2,
-        fontSize: 14, bottom: 18 }}>
-        100ml </Text>
-  </View>
-</View>  
-
-  </ScrollView>      
-      </View> */}
-
-
-  {/* 조리시간 */}
-<TouchableOpacity
-        style={{ left: 115, bottom: 140,
-        backgroundColor: '#FFFFFF',
-    paddingVertical: 5,
-    width: 112,
-    height: 150,
-    borderRadius: 10,
-    marginBottom: 15, }}
-        onPress={() => setModalVisible(true)}>
-        <Image style={{left: 45, top: 15, position: 'absolute', alignItems: 'center',  }} source={require('./assets/clock.png')}/>
-        <Text style={{
-          top: 78,
-          color: '#9C9C9C', 
-        fontSize: 18, 
-        textAlign: 'center',
-        }}> {cookingTime || '조리시간'} </Text>
-</TouchableOpacity>
-
-      <View
-        style={{ left: 115, bottom: 140,
-        backgroundColor: '#FFFFFF',
-    paddingVertical: 5,
-    width: 112,
-    height: 166,
-    borderRadius: 10, }} >
-        <Text style={{
-          top: 5,
-          color: '#000000', 
-        fontSize: 18, 
-        textAlign: 'center',
-        }}>
-        
-        난이도</Text>
-    <View style={{flexDirection: 'row', gap: 0}}>
-
-    
-    {/* 별컴포넌트 1 */}
-        <TouchableOpacity style={{width: 24, height: 24, backgroundColor: 'transparent', marginLeft: 10, marginTop: 50, }}
-        onPress={() => handleSmallButtonClick('button1')}        >
-        <Image source={require('./assets/star1.png')}/>
+        </View>
+        <TouchableOpacity style={styles.addButton} onPress={fetchRecipeData}>
+          <Text style={styles.addButtonText}>Add Recipe</Text>
         </TouchableOpacity>
-        
-
-        <TouchableOpacity style={{width: 24, height: 24, backgroundColor: 'transparent', marginLeft: 10, marginTop: 50}}
-        onPress={() => handleSmallButtonClick('button2')}>
-        <Image style={{right: 34}} source={getImageForButton('button2')} />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={{width: 24, height: 24, backgroundColor: 'transparent', marginLeft: 10, marginTop: 50}}
-        onPress={() => handleSmallButtonClick('button3')} >
-       <Image style={{right: 68}} source={getImageForButton('button3')} />
-        </TouchableOpacity>
+        <View style={styles.sortButtons}>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('korean')}>
+            <Text>Sort by Korean</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('lack')}>
+            <Text>Sort by Lack</Text>
+          </TouchableOpacity>
+          {/* Add more sorting buttons as needed */}
       </View>
+    </View>
+
+
+
+      {/* Filtering and Sorting Controls */}
+      <View style={styles.controls}>
+        <View style={styles.filterSwitchContainer}>
+          <Text>Show User Recipes</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={showUserRecipes ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={handleToggleSwitch}
+            value={showUserRecipes}
+          />
+        </View>
+        <TouchableOpacity style={styles.addButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.addButtonText}>Add Recipe</Text> 
+        </TouchableOpacity>
+        <View style={styles.sortButtons}>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('korean')}>
+            <Text>Sort by Korean</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sortButton} onPress={() => handleSortOrder('lack')}>
+            <Text>Sort by Lack</Text>
+          </TouchableOpacity>
+          {/* Add more sorting buttons as needed */}
+        </View>
       </View>
 
-<View style={styles.row}>
-      <TouchableOpacity
-        style={{ top: 85,
-        
-    borderWidth: 1,
-    borderColor: '#CCCCCC',
-    paddingVertical: 10,
-    width: 140,
-    borderRadius: 25,
-    marginBottom: 20, }}
-        onPress={() => navigation.goBack()}>
- 
-        <Text style={{
-        color: '#CCCCCC', 
-        fontSize: 15, 
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontFamily: 'NanumGothic' 
+
+        {/* 레시피 도움말 모달 */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
         }}>
-        뒤로가기</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonUnfill}
-        onPress={() => navigation.navigate('Ingredients')}>
-        <Text style={styles.buttonColorText}>다음</Text>
-      </TouchableOpacity>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+      <View style={{flexDirection: 'row', borderBottomWidth: 3, borderColor: '#FEA655', padding: 15, width: 304, justifyContent: 'center', }}> 
+          <Text style={{fontSize: 15, color: '#FEA655', }}>레시피</Text>
+            <Text style={{fontSize: 15,}}>에서는 무엇을 하나요?</Text>
+</View> 
+
+  <View style={{ padding: 20, width: 304, justifyContent: 'center', }}> 
+  <View style={{flexDirection: 'row',}}>
+          <Text style={{fontSize: 12, color: '#FEA655', }}>레시피</Text>
+            <Text style={{fontSize: 12,}}>에서는 </Text>
+            <Text style={{fontSize: 12, color: '#FEA655', }}>냉장고</Text>
+<Text style={{fontSize: 12,}}>에 등록한 재료 목록을 기반 </Text> 
   </View>
+  <Text style={{fontSize: 12,}}>으로, 조리 가능한 레시피 목록과 부족한 재료의 개수를 볼 수 있습니다. </Text>
+
+<View style={{justifyContent: 'center', flexDirection: 'row', gap: 5}}>
+  <Image style={{marginTop: 10}} source={require('../assets/icons/koreanOrder.png')}/>
+  <Image style={{marginTop: 10}} source={require('../assets/icons/recommend.png')}/>
 </View>
-  );
-}
+
+   <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
+   위 두가지 필터를 통해 레시피 목록의 정렬 순서를 변경할 수 있습니다.</Text> 
+
+<View style={{alignItems: 'center'}}>
+  <Image style={{marginTop: 8, }} source={require('../assets/icons/bookmarkFill.png')}/>
+</View>
+
+   <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
+    레시피 박스 우측 하단 북마크를 이용하여 원하는</Text> 
+
+  <View style={{flexDirection: 'row', marginTop: 3}}>
+    <Text style={{fontSize: 12,}}>
+    레시피를 </Text> 
+    <Text style={{fontSize: 12, color: '#FEA655',}}>
+    북마크</Text> 
+    <Text style={{fontSize: 12,}}>
+    에서 따로 모아볼 수 있습니다.</Text> 
+</View>
+
+<View style={{alignItems: 'center'}}>
+  <Image style={{marginTop: 10, }} source={require('../assets/icons/add.png')}/>
+</View>
+
+<Text style={{fontSize: 12,  marginVertical: 5}}>
+    우측 하단의 버튼을 이용하여 내가 만든 레시피를 등록할 수 있습니다. </Text> 
+
+<View style={{alignItems: 'center'}}>
+    <Image style={{marginTop: 10,}} source={require('../assets/icons/isMyRecipe.png')}/>
+</View>
+    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
+     좌측 상단의 체크박스를 이용하여 내가 만든 레시피만 따로 볼 수 있습니다.</Text> 
+ </View> 
+
+    <TouchableOpacity
+              style={{width: 304, borderTopWidth: 2, borderColor: '#ccc'}}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={{fontSize: 15, color: '#000', textAlign: 'center', padding: 10}}>확인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </View>
+  )
+};
 
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
+    container: {
     backgroundColor: '#F8F9FA', // 배경색상 추가
+    height: 'auto',
+  },
+  containerScroll: {
+    top: 20,
+    backgroundColor: '#F8F9FA', // 배경색상 추가
+    height: 'auto',
+  },
+  cont: {
+    flexDirections: 'row',
+    justifyContent: 'center',
+    felxWrap: 'wrap',
+  },
+  post: {
+    position: 'relative',
+    width: 155,
+    height: 165,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 3,
+    alignContent: 'flex-start',
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 10,
+      height: 10,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  addButton:{
+    width:55,
+    height:55,
+    borderRadius: 50,
+    top: 630,
+    position: 'absolute',
+    right: 30,
+    zIndex: 2,
+    backgroundColor: '#FEA655',
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 5,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 10
+  },
+  foodText: {
+    top: 16,
+    paddingLeft: 12,
+    fontWeight: 'bold',
+  },
+  lackingText: {
+    paddingLeft: 2,
+    bottom: 7,
+    color: '#E50000',
+    fontSize: 10,
+    fontFamily: 'NanumGothic',
+  },
+  timeText: {
+    top: 10,
+    color: '#000',
+    fontSize: 12,
+    margin: 5,
+    fontFamily: 'NanumGothic',
+  },
+  row: {
+    flexDirection: 'row', 
+    display:'flex',
+    flexWrap:'wrap',
+    justifyContent: 'space-around', 
+    position: 'relative', 
+    paddingHorizontal: 40, 
+    paddingBottom: 80, 
+    gap: 20,
+  
+  },
+  searchWrapper:{
+    width: 299,
+    height: 48,
+    borderRadius: 15,  
+    display: 'flex',
+    flexDirection:'row'
+  },
+  searchArea:{
+    width: '100%',
+    height: 48,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems:'center',
+    marginTop: 11
+  },
+  searchImg:{
+    width: 60,
+    height: '100%',
+    display: 'flex',
+    alignItems:'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    position: 'absolute'
   },
   centeredView: {
     flex: 1,
@@ -466,122 +535,42 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
+    width: 304, 
+    height: 526,
     margin: 20,
     backgroundColor: 'white',
-    borderRadius: 10,
-    width: 304,  
-    height: 189,
-    padding: 35,
+    borderRadius: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
-      width: 500,
-      height: 500,
+      width: 0,
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 500,
+    elevation: 5,
   },
-  centeredViewPhoto: {
-
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    top: 82,
+  infoBtn: {
+    borderWidth: 1.5,
+    borderColor: 'red',
+    borderRadius: 50,
+    width: 15,
+    height: 15,
+    marginHorizontal: 5
   },
-  modalViewPhoto: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    width: 130,  
-    height: 80,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 500,
-      height: 500,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 500,
-  },
-
-  row: {
-    position: 'absolute',
-    top: 530,
-    flexDirection: 'row', 
-    justifyContent: 'space-evenly',
-    gap: 25,
-  },
-
-  buttonUnfill: {
-    top: 85,
-    width: 140,
-    borderWidth: 1,
-    borderColor: '#FEA655',
-    paddingVertical: 10,
-    borderRadius: 25,
-    marginBottom: 20,
-
-  },
-  buttonColorText: {
-    color: '#FEA655',
-    fontSize: 15,
+  infoTxt: {
+    color: 'red',
     textAlign: 'center',
-    fontWeight: 'bold',
-    fontFamily: 'NanumGothic',
+    textWeight: 'bold',
+    bottom: 1,
   },
-  modButton: {
-    top: 40,
-    width: 90,
+  bookmarkButton: {
+    marginTop: 5,
+    padding: 5,
+    borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#FEA655',
-    paddingVertical: 5,
-    borderRadius: 25,
+    borderColor: 'black',
   },
-  modButtonText: {
-    color: '#FEA655',
-    fontSize: 15,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontFamily: 'NanumGothic',
-  },
-
-//modal eg 
-buttonContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  button: {
-    width: 100,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 5,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  saveButton: {
-    backgroundColor: 'gray',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  selectedColorsContainer: {
-    alignItems: 'center',
-  },
-  selectedColorsText: {
-    fontSize: 18,
-    marginBottom: 5,
-  },
-
 });
 
-export default AddRecipeMain;
+export default RecipeTab;
