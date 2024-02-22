@@ -2,139 +2,48 @@
 
 import React, {useState} from 'react';
 import {
-  NavigationContainer,
   Text,
-  Button,
   View,
-  TouchableOpacity,
-  FlatList, ScrollView, 
-  StyleSheet, Alert, Modal, Image
+  TouchableOpacity, ScrollView, 
+  StyleSheet, Image
 } from 'react-native';
 
-
-
-const Title = props => {
-const {food} = props
-
-  return (
-    <Text style={{color: '#000', marginHorizontal: 5,
-        textDecorationLine: 'underline', textDecorationColor: '#FEA655', fontSize: 20, 
-        }}>{props.food}</Text>
-
-  );
-};
 
 {/* 음식재료 */}
 const Ingred = props => {
 
-
-  return (
-    <View style={{ 
-    marginVertical: 2,
-    marginTop: 14,
-    alignItems: 'flex-end',
-    right: 124,
-    position: 'absolute',
-
-    }}>
-    <Text style={{color: '#000', marginHorizontal: 5,
-        fontSize: 13, fontWeight: 'bold', }}>
-        {props.ingred}</Text> 
-
-    </View>
-  );
-};
-
-const Num = props => {
   return (
 
- <View style={{ 
-    left: 101,
-    top: 12,
-    alignItems: 'flex-end',
-    
+ <View style={{flextDirection: 'row',  }}>
+
+  <View style={{ 
+    marginHorizontal: 2,
+    right: 40,
+    alignItems: 'center',
+    top: 2,
     }}>
-    <Text style={{ color: '#000', marginHorizontal: 5,
-        fontSize: 13, }}>
-        {props.num} </Text>
+    <Text style={{color: '#000', marginHorizontal: 2,
+        fontSize: 14, }}>
+        {props.ingred}
+    </Text>     
   </View>
-  );
-};
-
-const Unit = props => {
-
-
-  return (
-
- <View style={{ 
-    left: 125,
-    top: 12,
-    alignItems: 'flex-start',
-    position: 'absolute'
+ <View style={{ left: 47, alignItems: 'center',
     }}>
-    <Text style={{ color: '#000', marginHorizontal: 5,
-        fontSize: 13,}}>
-      {props.unit}</Text>
+    <Text style={{ color: '#000', marginHorizontal: 2,
+        fontSize: 14, bottom: 20 }}>
+        {props.amount} </Text>
   </View>
-  );
-};
-
-const Measure = props => {
 
 
-  return (
-
-    <View style={{ 
-    marginLeft: 105, 
-    top: 12,
-    left: 70,
-    alignItem: 'center',
-    position: 'absolute',
-    
-    }}>
-        <Text style={{color: '#979797', marginHorizontal: 5, fontSize: 12
-        }}>
-        {props.measure}</Text>
-    </View>
+</View>
   );
 };
 
 
 
-const Time = item => {
-const {food, time} = props
-
-  return (
-    <View style={{flexDirection: 'row', justifyContent: 'center', 
-    marginVertical: 5,
-    marginHorizontal: 20,}}>
-        <Text style={{color: '#000', marginHorizontal: 5,
-        fontSize: 18,}}>
-        {item.time} 분</Text>
-
-    </View>
-  );
-};
-
-const recipes = [{ id: 1, recipe_name: '김치찌개', measure: 1, num: 30, unit: '햄', img: ''}, ]
 
   const RecipeMain = ({navigation}) => {
-  const time = [1, 40];
-
-  const allFood = [...recipes];
-  const filteredData = allFood;
-
-  
-  function updateCookingTime() {
-  const hasHour = time[0] !== '0';
-  const hasMinute = time[1] !== '0';
-  if (hasHour || hasMinute){
-    const newCookingTime = `${hasHour ? hour + '시간' : ''} ${hasMinute ? min + '분' : ''}`;
-    return newCookingTime;
-  }
-}
-
-
+  const time = [1, 30];
 
   {/* 북마크 */}
 const [book, setBook] = useState({
@@ -163,14 +72,40 @@ const [book, setBook] = useState({
     }
   };
 
+const recipeDifficulty = 3;
+
+const getImageForButton = ({recipeDifficulty}) => {
+      switch (recipeDifficulty) {
+        case 1:
+          return require('./assets/star1.png');
+        case 2:
+          return require('./assets/star2.png');
+        case 3:
+          return require('./assets/star3.png');
+        default:
+          return require('./assets/star1.png');
+    } 
+  };
+const recipeImage='';
+const photoImage = () => {
+  if(recipeImage==''){
+    return require('./assets/photoNotReady.png');
+  }
+  else{
+    return {uri: recipeImage};
+  }
+};
 
   return (
-    <View style={styles.container}>
+  <View style={styles.container}>
 
-      <Image source={{ uri: "https://via.placeholder.com/118x66"}}
-        style={{top: 83,
+      {/* 사진추가 */}
+      <View
+        style={{top: 35,
     marginBottom: 20, 
-    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139,}}/>
+    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} >
+    <Image source={photoImage()}/>
+    </View>
 
 
 {/*<ScrollView style={{top: 100, height: 'auto'}}> */}
@@ -178,7 +113,7 @@ const [book, setBook] = useState({
 {/*텍스트박스 어떻게 한쪽으로만 늘어나게하지 */}
       <View
         style={{
-          top: 240, right: 130, marginLeft: 10,
+          top: 190, right: 130, marginLeft: 10,
         backgroundColor: '#FFFFFF',
         
         borderRadius: 10,
@@ -186,14 +121,20 @@ const [book, setBook] = useState({
         marginBottom: 17, 
           }}
 > 
-<Title food="닭볶음탕"/>
+{/* 음식이름 */}
+<Text style={{color: '#000', marginHorizontal: 5,
+        textDecorationLine: 'underline', textDecorationColor: '#FEA655', fontSize: 20, 
+        }}>닭볶음탕</Text>
+
     <TouchableOpacity style={{position: 'absolute', left: 315, bottom: 10}} onPress={() => handleBookmarkClick('bookmarkFill')}>
         <Image source={getImageForBookmark('bookmarkFill')}/>
     </TouchableOpacity>
 
       </View>
+
+{/* 재료 & 양 */}
 <View
-        style={{ right: 62, top: 240,
+        style={{ right: 62, top: 190,
         backgroundColor: '#FFFFFF',
     paddingVertical: 20,
     width: 215,
@@ -202,46 +143,49 @@ const [book, setBook] = useState({
     }}>
     <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' , }} source={require('./assets/bowl.png')}/>
 
-  <View style={{flexDirection: 'row'}}>
-        <Ingred ingred="아스파라거스" />        
-        <Num num="100" />
-        <Unit unit="ml"/>
-        <Measure measure="70g"/>
-  </View>
-  <View style={{flexDirection: 'row'}}>
-        <Ingred ingred="표고버섯" />
-        <Num num="2" />
-        <Unit unit="작은술"/>
-        <Measure measure="1000g"/>
-  </View>
-   <View style={{flexDirection: 'row'}}>
-        <Ingred ingred="감자" />
-        <Num num="1000" />
-        <Unit unit="개"/>
-        <Measure measure="1000g"/>
 
-<FlatList
-        data={filteredData}
-        keyExtractor={(item) => item.recipe_id}
-        renderItem={({ item }) => (
-      <View style={{ 
-    marginVertical: 2,
-    marginTop: 14,
-    alignItems: 'flex-end',
-    right: 124,
-    position: 'absolute',
-
+<ScrollView style={{
+    width: 215,
+    height: 'auto', 
+    top: 20,
+    marginBottom: 20
     }}>
-    <Text style={{color: '#000', marginHorizontal: 5,
-        fontSize: 13, fontWeight: 'bold', }}>
-        {item.ingred}</Text> 
-
-    </View>)} />
+  <View style={{flextDirection: 'row',  }}>
+  <View style={{ 
+    marginHorizontal: 2,
+    right: 40,
+    alignItems: 'center',
+    top: 2,
+    }}>
+    <Text style={{color: '#000', marginHorizontal: 2,
+        fontSize: 14, }}>
+        까나리액젓
+    </Text>     
   </View>
-        
+ <View style={{ left: 47, alignItems: 'center',
+    }}>
+    <Text style={{ color: '#000', marginHorizontal: 2,
+        fontSize: 14, bottom: 18 }}>
+        100ml </Text>
+  </View>
+</View>        
+        <Ingred ingred="표고버섯" amount="1000작은술" />
+        <Ingred ingred="감자" amount="10ml" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+        <Ingred ingred="소고기" amount="300g" />
+
+  </ScrollView>      
       </View>
 <View
-        style={{ left: 115, bottom: 91,
+        style={{ left: 115, bottom: 140,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 112,
@@ -252,23 +196,25 @@ const [book, setBook] = useState({
     justifyContent: 'center', top: 78,
           color: '#000',}}>
         <Image style={{ left: 45, bottom: 98, position: 'absolute', alignItems: 'center', }} source={require('./assets/clock.png')}/>
+
+      {/* 시간 */}
         <Text style={{
           color: '#000', 
-        fontSize: 18, 
+        fontSize: 17, 
         textAlign: 'center',
         bottom: 15
-        }}> {updateCookingTime}분 {'\n'}이내</Text>
+        }}>{time[0] !== 0 && `${time[0]}시간 `}{time[1] !== 0 && `${time[1]}분`}{'\n'}이내</Text>
       </View>
-      </View>
+  </View>
 
       <View
-        style={{ left: 115, bottom: 91,
+        style={{ left: 115, bottom: 140,
         backgroundColor: '#FFFFFF',
     paddingVertical: 5,
     width: 112,
     height: 166,
     borderRadius: 10, }}
-        onPress={() => navigation.navigate('Recipe')}>
+      >
         <Text style={{
           top: 5,
           color: '#000000', 
@@ -276,7 +222,15 @@ const [book, setBook] = useState({
         textAlign: 'center',
         }}>
         난이도</Text>
+    {/* 별컴포넌트 */}
+  <View style={{width: 24, height: 24, backgroundColor: 'transparent', marginLeft: 10, marginTop: 50, }}
+        onPress={() => handleSmallButtonClick({recipeDifficulty})}        >
+        <Image source={getImageForButton({recipeDifficulty})} />
+  </View>
       </View>
+
+
+
 
 <View style={styles.row}>
       <TouchableOpacity
@@ -321,7 +275,7 @@ const styles = StyleSheet.create({
 
   row: {
     position: 'absolute',
-    top: 570,
+    top: 530,
     flexDirection: 'row', 
     justifyContent: 'space-evenly',
     gap: 25,
