@@ -277,7 +277,7 @@ const [my, setMy] = useState({
               </View>
         <View style={{marginLeft: 7, flexDirection: 'row', top: 13}}>
           <Image style={{top: 15, marginLeft: 4}} source={require('../assets/icons/clock.png')}/>
-              <Text style={styles.timeText}>
+            <Text style={styles.timeText}>
               {recipe.time[0] !== 0 && `${recipe.time[0]}시간 `}
               {recipe.time[1] !== 0 && `${recipe.time[1]}분`} 이내
             </Text>
@@ -285,8 +285,8 @@ const [my, setMy] = useState({
         <TouchableOpacity
               onPress={() => handleToggleBookmark(recipe.id)}
               style={[styles.bookmarkButton, { backgroundColor: isBookmarked(recipe.id) ? 'yellow' : 'white' }]}>
-              <Text>{isBookmarked(recipe.id) ? BookmarkFill : Bookmark}</Text>
-            </TouchableOpacity>
+              <Image {...isBookmarked(recipe.id) ? require('../assets/icons/bookmarkFill.png') : require('../assets/icons/bookmark.png')}/>
+        </TouchableOpacity>
 
             </TouchableOpacity>
           ))}
