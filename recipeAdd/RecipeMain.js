@@ -30,7 +30,7 @@ const Ingred = props => {
  <View style={{ left: 47, alignItems: 'center',
     }}>
     <Text style={{ color: '#000', marginHorizontal: 2,
-        fontSize: 14, bottom: 20 }}>
+        fontSize: 14, bottom: 17 }}>
         {props.amount} </Text>
   </View>
 
@@ -149,26 +149,7 @@ const photoImage = () => {
     height: 'auto', 
     top: 20,
     marginBottom: 20
-    }}>
-  <View style={{flextDirection: 'row',  }}>
-  <View style={{ 
-    marginHorizontal: 2,
-    right: 40,
-    alignItems: 'center',
-    top: 2,
-    }}>
-    <Text style={{color: '#000', marginHorizontal: 2,
-        fontSize: 14, }}>
-        까나리액젓
-    </Text>     
-  </View>
- <View style={{ left: 47, alignItems: 'center',
-    }}>
-    <Text style={{ color: '#000', marginHorizontal: 2,
-        fontSize: 14, bottom: 18 }}>
-        100ml </Text>
-  </View>
-</View>        
+    }}>       
         <Ingred ingred="표고버섯" amount="1000작은술" />
         <Ingred ingred="감자" amount="10ml" />
         <Ingred ingred="소고기" amount="300g" />
