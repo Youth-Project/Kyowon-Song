@@ -91,13 +91,13 @@ const RecipeMain = ({ navigation, route }) => {
   const getImageForButton = ({recipeDifficulty}) => {
       switch (recipeDifficulty) {
         case 1:
-          return require('./assets/icons/star1.png');
+          return require('../assets/icons/star1.png');
         case 2:
-          return require('./assets/icons/star2.png');
+          return require('../assets/icons/star2.png');
         case 3:
-          return require('./assets/icons/star3.png');
+          return require('../assets/icons/star3.png');
         default:
-          return require('./assets/icons/star1.png');
+          return require('../assets/icons/star1.png');
     } 
   };
 
