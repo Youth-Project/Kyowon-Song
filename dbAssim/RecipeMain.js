@@ -2,6 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import firestore from "@react-native-firebase/firestore";
 
+{/* 음식재료 */}
+const Ingred = item => {
+
+  return (
+
+ <View style={{flextDirection: 'row',  }}>
+
+  <View style={{ 
+    marginHorizontal: 2,
+    right: 40,
+    alignItems: 'center',
+    top: 2,
+    }}>
+    <Text style={{color: '#000', marginHorizontal: 2,
+        fontSize: 14, }}>
+        {item.ingred}
+    </Text>     
+  </View>
+ <View style={{ left: 47, alignItems: 'center',
+    }}>
+    <Text style={{ color: '#000', marginHorizontal: 2,
+        fontSize: 14, bottom: 20 }}>
+        {item.amount} </Text>
+  </View>
+
+
+</View>
+  );
+};
+
+
+
 const RecipeMain = ({ navigation, route }) => {
   const [recipeName, setRecipeName] = useState('');
   const [recipeTime, setRecipeTime] = useState([]);
@@ -118,29 +150,11 @@ const RecipeMain = ({ navigation, route }) => {
     top: 20,
     marginBottom: 20
     }}>
-  <View style={{flextDirection: 'row',  }}>
-  <View style={{ 
-    marginHorizontal: 2,
-    right: 40,
-    alignItems: 'center',
-    top: 2,
-    }}>
-  {recipeIngredients.map((ingred, index) => (
-    <Text key={index} style={{color: '#000', marginHorizontal: 2,
-        fontSize: 14, }}>
-{ingred}
-    </Text> 
+
+{/*map*/}
+{filteredData.map((recipe) => (
+    <Ingred ingred={recipe.ingred} amount={recipe.amount} />
   ))}
-  </View>
- <View style={{ left: 47, alignItems: 'center',
-    }}>
-  {recipeIngredients.map((amount, index) => (
-    <Text key={index} style={{ color: '#000', marginHorizontal: 2,
-        fontSize: 14, bottom: 18 }}>
-{amount} </Text>
-  ))}
-  </View>
-</View>    
   </ScrollView>      
       </View>
 
