@@ -236,7 +236,7 @@ const photoImage = (recipeImage) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('recipeDetail')}>
+        onPress={() => navigation.navigate('UserRecipeDetail')}>
         <Text style={styles.buttonText}>조리하기</Text>
       </TouchableOpacity>
   </View>
