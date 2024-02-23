@@ -23,7 +23,7 @@ const Ingred = item => {
  <View style={{ left: 47, alignItems: 'center',
     }}>
     <Text style={{ color: '#000', marginHorizontal: 2,
-        fontSize: 14, bottom: 20 }}>
+        fontSize: 14, bottom: 17 }}>
         {item.amount} </Text>
   </View>
 
