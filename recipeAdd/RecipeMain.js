@@ -62,13 +62,13 @@ const [book, setBook] = useState({
     if (book[buttonName]) {
       switch (buttonName) {
         case 'bookmarkFill':
-          return require('./assets/bookmarkFill.png');
+          return require('../assets/icons/bookmarkFill.png');
         default:
-          return require('./assets/bookmark.png');
+          return require('../assets/icons/bookmark.png');
       }
     } 
     else{
-      return require('./assets/bookmark.png');
+      return require('../assets/icons/bookmark.png');
     }
   };
 
@@ -77,19 +77,19 @@ const recipeDifficulty = 3;
 const getImageForButton = ({recipeDifficulty}) => {
       switch (recipeDifficulty) {
         case 1:
-          return require('./assets/star1.png');
+          return require('../assets/icons/star1.png');
         case 2:
-          return require('./assets/star2.png');
+          return require('../assets/icons/star2.png');
         case 3:
-          return require('./assets/star3.png');
+          return require('../assets/icons/star3.png');
         default:
-          return require('./assets/star1.png');
+          return require('../assets/icons/star1.png');
     } 
   };
 const recipeImage='';
 const photoImage = () => {
   if(recipeImage==''){
-    return require('./assets/photoNotReady.png');
+    return require('../assets/icons/photoNotReady.png');
   }
   else{
     return {uri: recipeImage};
@@ -141,7 +141,7 @@ const photoImage = () => {
     height: 330,
     borderRadius: 10, 
     }}>
-    <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' , }} source={require('./assets/bowl.png')}/>
+    <Image style={{right: 180, top: 10, zIndex: 2, position: 'absolute' , }} source={require('../assets/icons/bowl.png')}/>
 
 
 <ScrollView style={{
@@ -176,7 +176,7 @@ const photoImage = () => {
       <View style={{flexDirection: 'row', 
     justifyContent: 'center', top: 78,
           color: '#000',}}>
-        <Image style={{ left: 45, bottom: 98, position: 'absolute', alignItems: 'center', }} source={require('./assets/clock.png')}/>
+        <Image style={{ left: 45, bottom: 98, position: 'absolute', alignItems: 'center', }} source={require('../assets/icons/clock.png')}/>
 
       {/* 시간 */}
         <Text style={{
