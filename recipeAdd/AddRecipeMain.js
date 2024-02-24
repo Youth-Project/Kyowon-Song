@@ -2,23 +2,14 @@
 {/* 전체 맵 안에 포로 url 재료 map 조리시간 array, 난이도 , 과정 array */}
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, TextInput, StyleSheet, Modal, Image, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ColorButton = ({ color, onPress, selected }) => {
-  return (
-    <TouchableOpacity
-      style={[styles.button, { backgroundColor: color, opacity: selected ? 0.5 : 1 }]}
-      onPress={onPress}>
-      <Text style={styles.buttonText}>{color}</Text>
-    </TouchableOpacity>
-  );
-};
 
 const AddRecipeMain = ({navigation}) => {
   const [food, onChangeFood] = useState('');
   const [hour, setHour] = useState('');
   const [min, setMin] = useState('');
   const [cookingTime, setCookingTime] = useState('');
-  const [ingredients, setIngredients] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -45,13 +36,13 @@ const AddRecipeMain = ({navigation}) => {
       switch (buttonName) {
         case 'button2':
           recipe_difficulty = 2;
-          return require('./assets/star2.png');
+          return require('../assets/icons/star2.png');
         case 'button3':
           recipe_difficulty = 3;
-          return require('./assets/star3.png');
+          return require('../assets/icons/star3.png');
         default:
           recipe_difficulty = 1
-          return require('./assets/star1.png');
+          return require('../assets/icons/star1.png');
       }
     } 
   };
@@ -71,46 +62,74 @@ const AddRecipeMain = ({navigation}) => {
   setModalVisible(false);
 };
 
-{/* 재료 업뎃 */}
-  const updateIngred = () => {
-  const hasHour = hour && hour !== '0';
-  const hasMinute = min && min !== '0';
-
-  if (hasHour || hasMinute) {
-    const addIngred = `${hasHour ? hour + '시간' : ''} ${hasMinute ? min + '분' : ''}`;
-    setIngredients(addIngred);
-  } else {
-    setIngredients('필요한 재료');
-  }
-
-  setModalVisible(false);
-};
 
 
-{/* 재료업뎃 모달 예시 */}
-  const [selectedColors, setSelectedColors] = useState([]);
-  const [displayColors, setDisplayColors] = useState(false);
+{/* 재료업뎃 모달  */}
+  const [data, setData] = useState([]);
+  const [modal2Visible, setModal2Visible] = useState(false);
 
-    const [modal2Visible, setModal2Visible] = useState(false);
-  
-  const handleColorSelection = (color) => {
-    if (selectedColors.includes(color)) {
-      setSelectedColors(selectedColors.filter(item => item !== color)); // Deselect color if already selected
-    } else {
-      setSelectedColors([...selectedColors, color]); // Select color if not already selected
+  const [ingred, setIngred] = useState('');
+  const [amount, setAmount] = useState('');
+
+const saveData = async () => {
+    // AsyncStorage에 데이터 저장
+  if(data.length!==0 && cookingTime.length!==0){
+    try {
+      await AsyncStorage.setItem('ingredients', data);
+      await AsyncStorage.setItem('time', cookingTime);
+      await AsyncStorage.setItem('difficulty', String(recipe_difficulty));
+      navigation.navigate('AddProgress');
+    } catch (error) {
+      console.error('사용자 정보를 저장할 수 없습니다: ', error);
     }
+  }
   };
 
-  const handleSave = () => {
-    setDisplayColors(true);
+    const openModal = () => {
+    setModal2Visible(true)
+    // 모달 열릴 때마다 입력값 초기화
+    setIngred('');
+    setAmount('');
+  };
+
+
+    const handleAddItem = () => {
+    if (ingred.trim() !== '' && amount.trim() !== '') {
+      setData((prevData) => [...prevData, `${ingred}       ${amount} ${foodUnits}`]);
+      setIngred('');
+      setAmount('');
+      setFoodUnits('개');
+    }
     setModal2Visible(false);
   };
 
+  const [conversion, setConversion] = useState('');
+  const [isPressed, setIsPressed] = useState(false);
+  const [foodUnits, setFoodUnits] = useState('개');
+    const handleUnitPress = (unit) => {
+        setFoodUnits(unit);
+        setIsPressed(!isPressed);
+    };
 
-  const [modal3Visible, setModal3Visible] = useState(false);
-const handlePhoto = () => {
-    setModal3Visible(false);
-  };
+const changeConversion = (foodUnits) =>{
+    switch (foodUnits) {
+        case '개':
+            setConversion('unit_to_gram');
+            break;
+        case '스푼':
+            setConversion('gram_to_spoon');
+            break;
+        case 'ml':
+            setConversion('ml_to_gram');
+            break;
+        case 'g':
+            setConversion('gram_to_gram');
+            break;
+        default:
+            break;
+      }
+}
+
 
   return (
     <View style={styles.container}>
@@ -234,13 +253,101 @@ onChangeText={(text) => setMin(text)}
     </Modal>
 
 
+{/* 냉장고 예시 모달 */}
+<Modal
+      animationType="slide"
+      transparent={true}
+      visible={modal2Visible}
+      onRequestClose={() => {
+        Alert.alert('Modal has been closed.');
+        setModalVisible(!modal2Visible);
+      }}>
+      <View style={styles.centeredView}>
+        <View style={styles.modalView2}>
+          <Text style={{fontSize: 15,bottom: 20,right: 85,}}>재료 입력하기</Text>
+
+      <View style={{flexDirection: 'row', marginTop: 8, marginLeft: 16 }}>
+
+      <Text style={{ right: 16,fontSize: 15,top: 42,}}>재료명: </Text>
+      <TextInput
+
+            style={{fontSize: 15,
+            borderWidth: 0.5,
+            height: 38,
+            width: 55,
+            right: 30,
+            color: '#878787',
+            textAlign: 'center',
+            borderTopWidth: 0,
+            borderLeftWidth: 0,
+            borderRightWidth:0,
+            paddingTop: 6,
+            marginLeft: 15,
+            top: 30}}
+            placeholder="감자" 
+            value={ingred} 
+
+            onChangeText={(text) => setIngred(text)}
+            />
+          <Text style={{ marginLeft: 7, right: 10, fontSize: 15,top: 42,}}>재료 양: </Text>
+          <TextInput
+            style={{fontSize: 15,
+            borderWidth: 0.5,
+            height: 38,
+            width: 55,
+            color: '#878787',
+            textAlign: 'center',
+            borderTopWidth: 0,
+            borderLeftWidth: 0,
+            borderRightWidth:0,
+            paddingTop: 6,
+            top: 30}}
+            placeholder="5" 
+            keyboardType='numeric'
+            
+value={amount}
+
+onChangeText={(text) => setAmount(text)}
+            />
+          </View>
+              <Text style={styles.textGray}>
+                    단위:
+                </Text>
+                <View style={styles.bottomContainer}>
+                    <View style={styles.unitsContainer}>
+                    <TouchableOpacity style={[styles.button, foodUnits === '개' ? styles.buttonPressed : null]} onPress={() => {changeConversion('개'); handleUnitPress('개')}}>
+                            <Text style= {styles.unitSelect}>개</Text>
+                            <View style={[styles.button, isPressed ? styles.buttonPressed : null]}></View>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, foodUnits === '스푼' ? styles.buttonPressed : null]} onPress={() => {handleUnitPress('스푼'); changeConversion('스푼')}}>
+                            <Text style= {styles.unitSelect}>스푼</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, foodUnits === 'ml' ? styles.buttonPressed : null]} onPress={() => {handleUnitPress('ml'); changeConversion('ml')}}>
+                            <Text style= {styles.unitSelect}>ml</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, foodUnits === 'g' ? styles.buttonPressed : null]} onPress={() => {handleUnitPress('g'); changeConversion('g')}}>
+                            <Text style= {styles.unitSelect}>g</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonContainer}>
+              
+                    <TouchableOpacity style= {styles.nextButton} onPress={handleAddItem} >
+                            <Text style={styles.next}>추가하기</Text>
+                    </TouchableOpacity> 
+                    </View>
+                </View>
+            
+      </View>
+     </View>
+    </Modal>
 
 {/* 사진추가 */}
     <TouchableOpacity
         style={{top: 35,
     marginBottom: 20, 
-    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#EDEDED', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} onPress={() => setModal3Visible(true)}>
-    <Image source={require('./assets/addPhoto.png')}/>
+    paddingTop: 4, borderRadius: 7, position: 'absolute', backgroundColor: '#FFFFFF', width: 350, height: 139, justifyContent: 'center', alignItems: 'center'}} >
+    <Image style={{width: 100, height: 100}} source={require('../assets/icons/truffle.png')}/>
+    <Image style={{width: 25, height: 25, position: 'absolute', left: 310, bottom: 20 }} source={require('../assets/icons/profile.png')}/>
     </TouchableOpacity>
 
 {/*<ScrollView style={{top: 100, height: 'auto'}}> */}
@@ -409,6 +516,23 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 500,
   },
+  modalView2: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    width: 304,  
+    height: 389,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 500,
+      height: 500,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 500,
+  },
   centeredViewPhoto: {
 
     justifyContent: 'flex-end',
@@ -490,23 +614,108 @@ buttonContainer: {
     color: 'white',
     fontSize: 16,
   },
-  saveButton: {
-    backgroundColor: 'gray',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginBottom: 10,
+  textGray:{
+      margin: 20,
+      top: 78,
+      color: '#000',
+      fontSize: 15
   },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
+  grayBorderContainer:{
+      borderBottomColor: '#EDEDED',
+      borderBottomWidth: 1.5,
+      height: '20%',
+      display: 'flex',
+      alignItems: 'center'
   },
-  selectedColorsContainer: {
-    alignItems: 'center',
+  input:{
+      marginTop: 10,
+      borderBottomColor: '#BCBCBC',
+      borderBottomWidth: 1,
+      width: 99,
+      height: 40,
+      textAlign: 'center',
+      fontSize:18
   },
-  selectedColorsText: {
-    fontSize: 18,
-    marginBottom: 5,
+  units:{
+      height: 24,
+      // width: 24,
+      paddingLeft: 5,
+      paddingRight: 5,
+      marginLeft: 20,
+      marginTop: 22,
+      fontSize: 15,
+      borderColor: '#D9D9D9',
+      borderWidth: 1,
+      display: 'flex',
+      justifyContent: 'center',
+      textAlign:'center',
+      borderRadius: 5
+  },
+  bottomContainer:{
+      // backgroundColor: 'yellow',
+      width: '100%',
+      height: '100%',
+  },
+  unitsContainer:{
+      display:'flex',
+      flexDirection:'row',
+      gap: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      marginTop: 40,
+      top: 46,
+  },
+  unitSelect:{
+      fontSize: 15,
+      width: 40,
+      height: 40,
+      display: 'flex',
+      justifyContent: 'center',
+      textAlign: 'center',
+      top: 6
+  },   
+  buttonContainer:{
+      display:'flex',
+      flexDirection:'row',
+      marginTop: 50,
+      gap: 30,
+      justifyContent:'center'
+  },
+  deleteButton:{
+      borderWidth:1,
+      borderRadius: 25,
+      borderColor: '#CCC',
+      width: 112,
+      height: 34,
+  },
+  delete:{
+      textAlign:'center',
+      padding: 5,
+      color: '#CCC',
+      fontWeight: '700',
+      fontSize: 15
+  },
+  nextButton:{
+      top: 20,
+      borderWidth:1,
+      borderRadius: 25,
+      borderColor: '#FEA655',
+      width: 112,
+      height: 34,
+  },
+  next:{
+      color: '#FEA655',
+      paddingVertical: 5,
+      borderRadius: 25,
+      textAlign:'center',
+      padding: 5,
+      fontWeight: '700',
+      fontSize: 15
+  },
+  buttonPressed: {
+    backgroundColor: '#EDEDED',
+    borderRadius: 10,
   },
 
 });
