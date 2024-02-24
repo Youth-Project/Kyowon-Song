@@ -478,7 +478,7 @@ onChangeText={(text) => setAmount(text)}
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.buttonUnfill}
-        onPress={() => navigation.navigate('Ingredients')}>
+        onPress={saveData}>
         <Text style={styles.buttonColorText}>다음</Text>
       </TouchableOpacity>
   </View>
