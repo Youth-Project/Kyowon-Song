@@ -155,7 +155,7 @@ const [my, setMy] = useState({
     if (star[buttonName]) {
       switch (buttonName) {
         case 'button2':
-          return require('../assets/icons/recommend.png');
+          return require('../assets/icons/quick.png');
         default:
           return require('../assets/icons/koreanOrder.png');
       }
@@ -375,7 +375,7 @@ const [my, setMy] = useState({
 
 <View style={{justifyContent: 'center', flexDirection: 'row', gap: 5}}>
   <Image style={{marginTop: 10}} source={require('../assets/icons/koreanOrder.png')}/>
-  <Image style={{marginTop: 10}} source={require('../assets/icons/recommend.png')}/>
+  <Image style={{marginTop: 10}} source={require('../assets/icons/quick.png')}/>
 </View>
 
    <Text style={{fontSize: 12, top: 8, marginVertical: 5}}>
